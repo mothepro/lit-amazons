@@ -48,7 +48,7 @@
     "typescript": "^3.7.4"
   },
   "dependencies": {
-    "@mothepro/amazons-engine": "^0.0.1",
+    "@mothepro/amazons-engine": "^0.0.4",
     "lit-confetti": "^0.1.4",
     "lit-element": "^2.2.1"
   }
