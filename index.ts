@@ -21,6 +21,7 @@ export default class extends LitElement {
   static readonly styles = css`
   :host {
     display: grid;
+    user-select: none;
   }
   `
 
