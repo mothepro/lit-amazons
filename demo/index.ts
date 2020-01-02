@@ -21,7 +21,7 @@ export default class extends LitElement {
     grid-auto-columns: 1fr;
   }
   
-  :host ::part(parity-dark) {
+  :host ::part(parity-same) {
     background-color: grey;
   }
   
