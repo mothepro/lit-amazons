@@ -14,22 +14,28 @@ export default class extends LitElement {
     display: block;
     border: thin solid black;
   }
+
+  :host lit-amazons {
+    min-height: 500px;
+  }
   
-  :host ::part(dark) {
+  :host ::part(parity-dark) {
     background-color: grey;
   }
   `
 
   protected finished() {
     this.confetti = 150
+    this.requestUpdate()
 
     // Display confetti for 5 seconds, before starting to remove it
     setTimeout(() =>
-      this.handle = setInterval(() =>
-        --this.confetti
-        || clearInterval(this.handle!),
-        100),
-      10000)
+      this.handle = setInterval(() => {
+        if (0 == --this.confetti)
+          clearInterval(this.handle!)
+        this.requestUpdate()
+      }, 100),
+      5000)
   }
 
   protected readonly render = () => html`
