@@ -4,6 +4,12 @@ import { Spot } from '@mothepro/amazons-engine'
 @customElement('amazons-spot')
 export default class extends LitElement {
 
+  static readonly styles = css`
+  :host {
+    display: grid;
+  }
+  `
+
   @property({ type: Number })
   state!: Spot
 
@@ -14,7 +20,7 @@ export default class extends LitElement {
       case Spot.WHITE:
         return '♕'
     }
-    return ''
+    return '.'
   }
 
   protected readonly render = () => html`

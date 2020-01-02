@@ -10,12 +10,13 @@ export default class extends LitElement {
   protected handle?: NodeJS.Timeout
 
   static readonly styles = css`
-  :host ::part(spot) {
-    display: inline-block;
-    width: 50px;
-    height: 50px;
-    margin: 0;
-    background: grey
+  :host {
+    display: block;
+    border: thin solid black;
+  }
+  
+  :host ::part(dark) {
+    background-color: grey;
   }
   `
 

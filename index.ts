@@ -1,4 +1,5 @@
-import { customElement, LitElement, property, html } from 'lit-element'
+import { customElement, LitElement, property, html, css } from 'lit-element'
+import { styleMap } from 'lit-html/directives/style-map.js'
 import Engine, { Board } from '@mothepro/amazons-engine'
 import './src/Spot.js'
 
@@ -8,6 +9,12 @@ export default class extends LitElement {
 
   @property({ type: Array })
   board?: Board
+
+  static readonly styles = css`
+  :host {
+    display: grid;
+  }
+  `
 
   private bindEngine() {
     this.engine.turn.on(detail => this.dispatchEvent(new CustomEvent('turn-started', { detail })))
@@ -29,14 +36,16 @@ export default class extends LitElement {
   }
 
   protected readonly render = () => this.engine && html`
-    ${this.engine.board.map((row, y) => html`${row.map((spot, x) => html`
+    ${this.engine.board.map((row, y) => row.map((spot, x) => html`
       <amazons-spot
-        part="spot x-${x} y-${y} num-${y * 8 /* Max X */ + x} ${(y * 8 /* Max X */ + x) % 2 ? 'odd' : 'even'}"
+        part="spot x-${x} y-${y} ${y % 2 == x % 2 ? 'light' : 'dark'}"
+        x=${x}
+        y=${y}
         state=${spot}
+        style=${styleMap({ gridRow: `${y + 1}`, gridColumn: `${x + 1}` })}
         .valid-moves=${this.engine.pieces.has([x, y].toString())
           ? this.engine.pieces.get([x, y].toString())!.moves
           : undefined}
-      ></amazons-spot>`)}
-    <br/>`)}
+      ></amazons-spot>`))}
   `
 }
