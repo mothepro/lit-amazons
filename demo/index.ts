@@ -16,11 +16,17 @@ export default class extends LitElement {
   }
 
   :host lit-amazons {
-    min-height: 500px;
+    font-size: 5em;
+    grid-auto-rows: 1fr;
+    grid-auto-columns: 1fr;
   }
   
   :host ::part(parity-dark) {
     background-color: grey;
+  }
+  
+  :host ::part(valid) {
+    background-color: yellow;
   }
   `
 
