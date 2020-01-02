@@ -1,12 +1,10 @@
 import { customElement, LitElement, property, html, css } from 'lit-element'
 import { styleMap } from 'lit-html/directives/style-map.js'
-import Engine, { Board, Position, Spot } from '@mothepro/amazons-engine'
+import Engine, { Board, Position, Spot, Action } from '@mothepro/amazons-engine'
 
 @customElement('lit-amazons')
 export default class extends LitElement {
   private engine = new Engine
-
-  private isMovingPiece = true
 
   /** The piece that is currently being dragged */
   private picked?: {
@@ -28,12 +26,8 @@ export default class extends LitElement {
   private bindEngine() {
     // Update what is rendered when board changes.
     this.engine.boardChanged.on(() => this.requestUpdate() && this.dispatchEvent(new CustomEvent('board-changed')))
-    this.engine.turn.on(detail => {
-      this.isMovingPiece = true
-      this.dispatchEvent(new CustomEvent('turn-started', { detail }))
-    })
+    this.engine.turn.on(detail => this.dispatchEvent(new CustomEvent('turn-started', { detail })))
     this.engine.moved.on(detail => {
-      this.isMovingPiece = false
       this.picked = {
         startingPosition: detail.position,
         validMoves: new Set([...detail.destructible].map(pos => pos.toString())),
@@ -58,7 +52,7 @@ export default class extends LitElement {
 
   /** Whether a spot on the board (piece) can be moved. */
   protected canMove = ([x, y]: Position) =>
-    this.isMovingPiece
+    this.engine.actionNeeded == Action.MOVE
     && this.engine.current == this.engine.board[y][x]
     && this.engine.pieces.has([x, y].toString())
 
@@ -75,7 +69,7 @@ export default class extends LitElement {
   protected destroy(event: MouseEvent) {
     event.preventDefault()
     const position = this.getTargetPosition(event.target)
-    if (!this.isMovingPiece && this.picked?.validMoves.has(position.toString())) {
+    if (this.engine.actionNeeded == Action.DESTROY && this.picked?.validMoves.has(position.toString())) {
       this.engine.destroy(position)
       delete this.picked
     }
@@ -131,10 +125,7 @@ export default class extends LitElement {
       @dragend=${this.letGoPiece}
       @drop=${this.dropPiece}
       @click=${this.destroy}
-      style=${styleMap({
-        gridRow: `${y + 1}`,
-        gridColumn: `${x + 1}`,
-      })}>
+      style=${styleMap({gridArea: `${y + 1} / ${x + 1}`})}>
       ${this.symbol(spot) // we have something to display
       ? html`
         <span

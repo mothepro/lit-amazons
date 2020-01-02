@@ -18,12 +18,12 @@
     esutils "^2.0.2"
     js-tokens "^4.0.0"
 
-"@mothepro/amazons-engine@^0.0.4":
-  version "0.0.4"
-  resolved "https://registry.yarnpkg.com/@mothepro/amazons-engine/-/amazons-engine-0.0.4.tgz#386040ed74582f6e748a01fae46c10d2bb907758"
-  integrity sha512-sxQpTx6pDOe7uYHk/rKMNMx4ELAhorGxt1c8k4bNU5JffLria5HRGAAAzMFJDO6tU8/U8W8ztpkMp4XgbrhIrQ==
+"@mothepro/amazons-engine@^0.0.6":
+  version "0.0.6"
+  resolved "https://registry.yarnpkg.com/@mothepro/amazons-engine/-/amazons-engine-0.0.6.tgz#35f972bd0fe458ba53c1c7f75933b7b9ec3c8590"
+  integrity sha512-iECD9r3CSaZtIMujkFxbgVt0FWUjZJcaSw9zMgh1G1hdDsRrP1PMDDJKF/6uHDh6Llg+Zz5X5M3GyB0yOHeLtw==
   dependencies:
-    fancy-emitter "^1.3.1"
+    fancy-emitter "^1.3.2"
 
 "@samverschueren/stream-to-observable@^0.3.0":
   version "0.3.0"
@@ -846,10 +846,10 @@ extsprintf@^1.2.0:
   resolved "https://registry.yarnpkg.com/extsprintf/-/extsprintf-1.4.0.tgz#e2689f8f356fad62cca65a3a91c5df5f9551692f"
   integrity sha1-4mifjzVvrWLMplo6kcXfX5VRaS8=
 
-fancy-emitter@^1.3.1:
-  version "1.3.1"
-  resolved "https://registry.yarnpkg.com/fancy-emitter/-/fancy-emitter-1.3.1.tgz#d1faf883774d1809e03cc98f9aee317f987d2a16"
-  integrity sha512-WBIzj9zGNMkteSil6uKAmJmLV4PHirAHlSvlbhBACgN4hqHRCETtnffyb/XJM0TD/xfDyvFrjnymjc9c3HBl3g==
+fancy-emitter@^1.3.2:
+  version "1.3.2"
+  resolved "https://registry.yarnpkg.com/fancy-emitter/-/fancy-emitter-1.3.2.tgz#2078810298cc2487a0b2f3f5c20d86f9da62deb4"
+  integrity sha512-jjVUpTTsdmxiyjydsVV6BebNTgmslI4KC+LQAU25/e+Pk+2+HpoV89QlKhjB0+i2UY4FR8iYrmvb6pAY/pVZyw==
 
 fast-deep-equal@^2.0.1:
   version "2.0.1"
