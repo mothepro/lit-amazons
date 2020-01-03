@@ -23,9 +23,10 @@ export default class extends LitElement {
   }
   `
 
-  private bindEngine() {
-    // Update what is rendered when board changes.
+  private async bindEngine() {
+    // Update what is rendered when board changes or state is changed.
     this.engine.boardChanged.on(() => this.requestUpdate() && this.dispatchEvent(new CustomEvent('board-changed')))
+    this.engine.stateChange.on(() => this.requestUpdate())
     this.engine.turn.on(detail => this.dispatchEvent(new CustomEvent('turn-started', { detail })))
     this.engine.moved.on(detail => {
       this.picked = {
@@ -37,6 +38,8 @@ export default class extends LitElement {
     })
     this.engine.winner.once(detail => this.dispatchEvent(new CustomEvent('game-completed', { detail })))
     this.engine.start()
+    await this.engine.stateChange.next
+    this.requestUpdate()
   }
 
   firstUpdated() {
@@ -94,13 +97,14 @@ export default class extends LitElement {
     && event.preventDefault()
 
   /** A piece has been dropped to a valid position */
-  protected dropPiece({ target }: DragEvent) {
+  protected async dropPiece({ target }: DragEvent) {
     this.engine.move(this.picked!.startingPosition, this.getTargetPosition(target)!)
-    delete this.picked
+    this.letGoPiece()
   }
 
   protected letGoPiece() {
     delete this.picked
+    this.dispatchEvent(new CustomEvent('piece-let-go'))
     this.requestUpdate()
   }
 
@@ -113,29 +117,25 @@ export default class extends LitElement {
       case Spot.DESTROYED:
         return '💣'
     }
-    return ''
   }
 
   protected readonly render = () => this.engine && html`
     ${this.engine.board.map((row, y) => row.map((spot, x) => html`
     <div
-      part="spot spot-${spot} x-${x} y-${y} parity-${y % 2 == x % 2 ? 'same' : 'different'} ${this.isValid([x, y]) ? 'valid' : ''}"
+      part="spot spot-${spot} spot-${this.isValid([x, y]) ? 'valid' : 'invalid'} spot-x-${x} spot-y-${y} spot-parity-${y % 2 == x % 2 ? 'same' : 'different'}"
       x=${x} y=${y}
       @dragover=${this.checkSpotValid}
       @dragend=${this.letGoPiece}
       @drop=${this.dropPiece}
       @click=${this.destroy}
       style=${styleMap({gridArea: `${y + 1} / ${x + 1}`})}>
-      ${this.symbol(spot) // we have something to display
-      ? html`
+      ${this.symbol(spot) /* we have something to display */ ? html`
         <span
-          part="symbol"
+          part="symbol symbol-${this.canMove([x, y]) ? 'draggable' : 'not-draggable'}"
           draggable=${this.canMove([x, y]).toString() as 'true' | 'false'}
-          x=${x}
-          y=${y}
+          x=${x} y=${y}
           @dragstart=${this.pickupPiece}
-        >${this.symbol(spot)}</span>`
-      : ''}
+        >${this.symbol(spot)}</span>`: ''}
     </div>`))}
   `
 }
