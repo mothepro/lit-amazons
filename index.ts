@@ -19,7 +19,7 @@ export type PieceLetGoEvent = CustomEvent
 
 @customElement('lit-amazons')
 export default class extends LitElement {
-  @property({ type: Engine })
+  @property()
   private engine!: Engine
 
   /** The piece that is currently being dragged */
@@ -64,22 +64,23 @@ export default class extends LitElement {
   protected isValid = ([x, y]: Position) =>
     this.picked?.validMoves.has([x, y].toString()) ?? false
 
-  protected getTargetPosition = (target: EventTarget | null): Position => [
-    parseInt((target as EventTarget & { getAttribute(s: string): string }).getAttribute('x')),
-    parseInt((target as EventTarget & { getAttribute(s: string): string }).getAttribute('y')),
+  /** Gets the position from an Event's target. */
+  protected getPosition = ({ target }: Event): Position => [
+    parseInt((target as EventTarget & Element).getAttribute('x')!),
+    parseInt((target as EventTarget & Element).getAttribute('y')!),
   ]
 
   /** Attempt to destory a spot on the board. */
   protected destroy(event: MouseEvent) {
-    const position = this.getTargetPosition(event.target)
+    const position = this.getPosition(event)
     if (this.engine.actionNeeded == Action.DESTROY && this.picked?.validMoves.has(position.toString())) {
       delete this.picked
       this.dispatchEvent(new CustomEvent('spot-destroyed', { detail: position }))
     }
   }
 
-  protected pickupPiece({ target }: DragEvent) {
-    const detail = this.engine.pieces.get(this.getTargetPosition(target).toString())!
+  protected pickupPiece(event: DragEvent) {
+    const detail = this.engine.pieces.get(this.getPosition(event).toString())!
     this.picked = {
       startingPosition: detail.position,
 
@@ -93,15 +94,15 @@ export default class extends LitElement {
 
   /** Currently dragging a piece over a potential spot. `preventDefault` to mark as valid. */
   protected checkSpotValid = (event: DragEvent) =>
-    this.picked?.validMoves.has(this.getTargetPosition(event.target)!.toString())
+    this.picked?.validMoves.has(this.getPosition(event)!.toString())
     && event.preventDefault()
 
   /** A piece has been dropped to a valid position */
-  protected async dropPiece({ target }: DragEvent) {
+  protected dropPiece(event: DragEvent) {
     this.dispatchEvent(new CustomEvent('piece-moved', {
       detail: {
         from: this.picked!.startingPosition,
-        to: this.getTargetPosition(target)!
+        to: this.getPosition(event)!
       }
     }))
     this.letGoPiece()
