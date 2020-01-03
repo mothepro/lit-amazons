@@ -1,9 +1,10 @@
-import { customElement, LitElement, property, html, css } from 'lit-element'
+import { customElement, LitElement, property, html, css, PropertyValues } from 'lit-element'
 import { styleMap } from 'lit-html/directives/style-map.js'
 import Engine, { Board, Position, Spot, Action } from '@mothepro/amazons-engine'
 
 @customElement('lit-amazons')
 export default class extends LitElement {
+  @property({ type: Engine })
   private engine = new Engine
 
   /** The piece that is currently being dragged */
@@ -12,10 +13,6 @@ export default class extends LitElement {
     validMoves: Set<string>
   }
 
-  /** This should not be accessed. The board should be obtained thru the engine. */
-  @property({ type: Array })
-  board?: Board
-
   static readonly styles = css`
   :host {
     display: grid;
@@ -23,33 +20,23 @@ export default class extends LitElement {
   }
   `
 
-  private async bindEngine() {
-    // Update what is rendered when board changes or state is changed.
-    this.engine.boardChanged.on(() => this.requestUpdate() && this.dispatchEvent(new CustomEvent('board-changed')))
-    this.engine.stateChange.on(() => this.requestUpdate())
-    this.engine.turn.on(detail => this.dispatchEvent(new CustomEvent('turn-started', { detail })))
-    this.engine.moved.on(detail => {
-      this.picked = {
-        startingPosition: detail.position,
-        validMoves: new Set([...detail.destructible].map(pos => pos.toString())),
-      }
+  async updated(oldProps: PropertyValues) {
+    if (oldProps.has('engine')) {
+      this.engine.boardChanged.on(() => this.requestUpdate() && this.dispatchEvent(new CustomEvent('board-changed')))
+      this.engine.stateChange.on(() => this.requestUpdate())
+      this.engine.turn.on(detail => this.dispatchEvent(new CustomEvent('turn-started', { detail })))
+      this.engine.moved.on(detail => {
+        this.picked = {
+          startingPosition: detail.position,
+          validMoves: new Set([...detail.destructible].map(pos => pos.toString())),
+        }
+        this.requestUpdate()
+        this.dispatchEvent(new CustomEvent('piece-moved', { detail }))
+      })
+      this.engine.winner.once(detail => this.dispatchEvent(new CustomEvent('game-completed', { detail })))
+      this.engine.start()
+      await this.engine.stateChange.next
       this.requestUpdate()
-      this.dispatchEvent(new CustomEvent('piece-moved', { detail }))
-    })
-    this.engine.winner.once(detail => this.dispatchEvent(new CustomEvent('game-completed', { detail })))
-    this.engine.start()
-    await this.engine.stateChange.next
-    this.requestUpdate()
-  }
-
-  firstUpdated() {
-    this.bindEngine()
-  }
-
-  updated(oldProps: Map<string, any>) {
-    if (oldProps.has('board')) {
-      this.engine = new Engine(this.board)
-      this.bindEngine()
     }
   }
 
