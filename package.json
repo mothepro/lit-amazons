@@ -35,10 +35,12 @@
     "build:esm": "tsc -p tsconfig.esm.json"
   },
   "devDependencies": {
+    "@mothepro/amazons-engine": "^0.0.6",
     "@types/mocha": "^5.2.7",
     "@types/should-sinon": "^0.0.5",
     "gh-pages": "^2.1.1",
     "importly": "^0.1.0-dev.0",
+    "lit-confetti": "^0.1.4",
     "mocha": "^6.2.2",
     "np": "^5.2.1",
     "replace": "^1.1.1",
@@ -48,8 +50,6 @@
     "typescript": "^3.7.4"
   },
   "dependencies": {
-    "@mothepro/amazons-engine": "^0.0.6",
-    "lit-confetti": "^0.1.4",
     "lit-element": "^2.2.1"
   }
 }

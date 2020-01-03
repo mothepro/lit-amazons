@@ -1,11 +1,26 @@
 import { customElement, LitElement, property, html, css, PropertyValues } from 'lit-element'
 import { styleMap } from 'lit-html/directives/style-map.js'
-import Engine, { Board, Position, Spot, Action } from '@mothepro/amazons-engine'
+import Engine, { Position, Spot, Action } from '@mothepro/amazons-engine'
+
+export type TurnStartedEvent = CustomEvent<Spot.BLACK | Spot.WHITE>
+export type BoardChangedEvent = CustomEvent
+export type GameCompletedEvent = CustomEvent<Spot.BLACK | Spot.WHITE>
+export type SpotDestroyedEvent = CustomEvent<Position>
+export type PiecePickedEvent = CustomEvent<{
+  color: Spot.BLACK | Spot.WHITE
+  position: Position
+  moves: Set<Position>
+}>
+export type PieceMovedEvent = CustomEvent<{
+  from: Position,
+  to: Position
+}>
+export type PieceLetGoEvent = CustomEvent
 
 @customElement('lit-amazons')
 export default class extends LitElement {
   @property({ type: Engine })
-  private engine = new Engine
+  private engine!: Engine
 
   /** The piece that is currently being dragged */
   private picked?: {
@@ -31,7 +46,6 @@ export default class extends LitElement {
           validMoves: new Set([...detail.destructible].map(pos => pos.toString())),
         }
         this.requestUpdate()
-        this.dispatchEvent(new CustomEvent('piece-moved', { detail }))
       })
       this.engine.winner.once(detail => this.dispatchEvent(new CustomEvent('game-completed', { detail })))
       this.engine.start()
@@ -57,11 +71,10 @@ export default class extends LitElement {
 
   /** Attempt to destory a spot on the board. */
   protected destroy(event: MouseEvent) {
-    event.preventDefault()
     const position = this.getTargetPosition(event.target)
     if (this.engine.actionNeeded == Action.DESTROY && this.picked?.validMoves.has(position.toString())) {
-      this.engine.destroy(position)
       delete this.picked
+      this.dispatchEvent(new CustomEvent('spot-destroyed', { detail: position }))
     }
   }
 
@@ -85,7 +98,12 @@ export default class extends LitElement {
 
   /** A piece has been dropped to a valid position */
   protected async dropPiece({ target }: DragEvent) {
-    this.engine.move(this.picked!.startingPosition, this.getTargetPosition(target)!)
+    this.dispatchEvent(new CustomEvent('piece-moved', {
+      detail: {
+        from: this.picked!.startingPosition,
+        to: this.getTargetPosition(target)!
+      }
+    }))
     this.letGoPiece()
   }
 
@@ -115,14 +133,14 @@ export default class extends LitElement {
       @dragend=${this.letGoPiece}
       @drop=${this.dropPiece}
       @click=${this.destroy}
-      style=${styleMap({gridArea: `${y + 1} / ${x + 1}`})}>
+      style=${styleMap({ gridArea: `${y + 1} / ${x + 1}` })}>
       ${this.symbol(spot) /* we have something to display */ ? html`
         <span
           part="symbol symbol-${this.canMove([x, y]) ? 'draggable' : 'not-draggable'}"
           draggable=${this.canMove([x, y]).toString() as 'true' | 'false'}
           x=${x} y=${y}
           @dragstart=${this.pickupPiece}
-        >${this.symbol(spot)}</span>`: ''}
+        >${this.symbol(spot)}</span>` : ''}
     </div>`))}
   `
 }

@@ -1,13 +1,15 @@
+import Engine from '@mothepro/amazons-engine'
 import { customElement, LitElement, html, css } from 'lit-element'
 import 'lit-confetti'
 import '../index.js'
+import { PieceMovedEvent, SpotDestroyedEvent } from '../index.js' // Seperate import since this is only for types
 
 @customElement('amazons-demo')
 export default class extends LitElement {
 
-  protected confetti = 0
+  protected engine = new Engine
 
-  protected handle?: NodeJS.Timeout
+  protected confetti = 0
 
   static readonly styles = css`
   :host {
@@ -58,26 +60,19 @@ export default class extends LitElement {
   }
   `
 
-  protected finished() {
-    this.confetti = 150
-    this.requestUpdate()
-
-    // Display confetti for 5 seconds, before starting to remove it
-    setTimeout(() =>
-      this.handle = setInterval(() => {
-        if (0 == --this.confetti)
-          clearInterval(this.handle!)
-        this.requestUpdate()
-      }, 100),
-      5000)
-  }
-
   protected readonly render = () => html`
     <lit-amazons
-      @game-completed=${this.finished}
+      .engine=${this.engine}
+      @piece-moved=${({ detail: { from, to } }: PieceMovedEvent) => this.engine.move(from, to)}
+      @spot-destroyed=${({ detail }: SpotDestroyedEvent) => this.engine.destroy(detail)}
       @piece-picked=${() => this.setAttribute('dragging', '')}
       @piece-let-go=${() => this.removeAttribute('dragging')}
+      @game-completed=${() => {
+        this.confetti = 150
+        this.requestUpdate() // Must update to show new value
+        setTimeout(() => !(this.confetti = 0) && this.requestUpdate(), 10000)
+      }}
     ></lit-amazons>
     <lit-confetti count=${this.confetti} gravity=1></lit-confetti>
-  `
+    `
 }
