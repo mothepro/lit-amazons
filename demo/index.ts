@@ -12,21 +12,49 @@ export default class extends LitElement {
   static readonly styles = css`
   :host {
     display: block;
-    border: thin solid black;
+    text-align: center
+  }
+
+  :host lit-confetti {
+    position: fixed;
   }
 
   :host lit-amazons {
-    font-size: 5em;
     grid-auto-rows: 1fr;
     grid-auto-columns: 1fr;
+
+    border: thin solid black;
+    width: 1000px;
+    height: 1000px;
   }
   
-  :host ::part(parity-same) {
-    background-color: grey;
+  :host ::part(spot) {
+    width: 100%
   }
   
-  :host ::part(valid) {
+  :host ::part(spot-parity-same) {
+    background-color: lightgrey;
+  }
+
+  :host ::part(symbol) {
+    font-size: 5em;
+  }
+
+  :host ::part(symbol-draggable) {
+    cursor: grab;
+  }
+
+  :host([dragging]) ::part(symbol-draggable) {
+    cursor: grabbing;
+  }
+  
+  :host ::part(spot-valid) {
     background-color: yellow;
+  }
+
+  :host ::part(spot-valid):hover {
+    cursor: pointer;
+    border: thin solid red;
   }
   `
 
@@ -47,6 +75,8 @@ export default class extends LitElement {
   protected readonly render = () => html`
     <lit-amazons
       @game-completed=${this.finished}
+      @piece-picked=${() => this.setAttribute('dragging', '')}
+      @piece-let-go=${() => this.removeAttribute('dragging')}
     ></lit-amazons>
     <lit-confetti count=${this.confetti} gravity=1></lit-confetti>
   `
