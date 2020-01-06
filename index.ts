@@ -114,17 +114,6 @@ export default class extends LitElement {
     this.requestUpdate()
   }
 
-  protected symbol(spot: Spot) {
-    switch (spot) {
-      case Spot.BLACK:
-        return '♛'
-      case Spot.WHITE:
-        return '♕'
-      case Spot.DESTROYED:
-        return '💣'
-    }
-  }
-
   protected readonly render = () => this.engine && html`
     ${this.engine.board.map((row, y) => row.map((spot, x) => html`
     <div
@@ -135,13 +124,13 @@ export default class extends LitElement {
       @drop=${this.dropPiece}
       @click=${this.destroy}
       style=${styleMap({ gridArea: `${y + 1} / ${x + 1}` })}>
-      ${this.symbol(spot) /* we have something to display */ ? html`
+      ${spot == Spot.DESTROYED || spot == Spot.BLACK || spot == Spot.WHITE ? html`
         <span
-          part="symbol symbol-${this.canMove([x, y]) ? 'draggable' : 'not-draggable'}"
+          part="symbol symbol-${spot} symbol-${this.canMove([x, y]) ? 'draggable' : 'not-draggable'}"
           draggable=${this.canMove([x, y]).toString() as 'true' | 'false'}
           x=${x} y=${y}
           @dragstart=${this.pickupPiece}
-        >${this.symbol(spot)}</span>` : ''}
+        ></span>` : ''}
     </div>`))}
   `
 }

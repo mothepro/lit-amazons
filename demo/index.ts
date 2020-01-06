@@ -58,6 +58,16 @@ export default class extends LitElement {
     cursor: pointer;
     border: thin solid red;
   }
+
+  :host ::part(symbol-1):before {
+    content: '♛';
+  }
+  :host ::part(symbol-2):before {
+    content: '♕';
+  }
+  :host ::part(symbol-4):before {
+    content: '💥';
+  }
   `
 
   protected readonly render = () => html`
