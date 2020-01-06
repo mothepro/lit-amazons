@@ -18,10 +18,10 @@
     esutils "^2.0.2"
     js-tokens "^4.0.0"
 
-"@mothepro/amazons-engine@^0.0.6":
-  version "0.0.6"
-  resolved "https://registry.yarnpkg.com/@mothepro/amazons-engine/-/amazons-engine-0.0.6.tgz#35f972bd0fe458ba53c1c7f75933b7b9ec3c8590"
-  integrity sha512-iECD9r3CSaZtIMujkFxbgVt0FWUjZJcaSw9zMgh1G1hdDsRrP1PMDDJKF/6uHDh6Llg+Zz5X5M3GyB0yOHeLtw==
+"@mothepro/amazons-engine@^0.0.7":
+  version "0.0.7"
+  resolved "https://registry.yarnpkg.com/@mothepro/amazons-engine/-/amazons-engine-0.0.7.tgz#b2a4924071f6709fb836fdada756424d3b01aa58"
+  integrity sha512-ZZwuW2vMZnXCGYcS4vpjcYGM0IbS3eox4Ewgsd5TZg34tO74ylQTxXhWzKkEDGbV74VZ5ihl/9hS+IsYATroJg==
   dependencies:
     fancy-emitter "^1.3.2"
 

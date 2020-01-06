@@ -76,13 +76,17 @@ export default class extends LitElement {
       this.requestUpdate() // Must update to show new value
       setTimeout(() => !(this.confetti = 0) && this.requestUpdate(), 10000)
     })
+
+    // TODO, both of these aren't needed
+    this.engine.boardChanged.on(() => this.requestUpdate())
+    this.engine.stateChange.on(() => this.requestUpdate())
     
     this.engine.start()
   }
 
   protected readonly render = () => html`
     <lit-amazons
-      .engine=${this.engine}
+      .engine=${{...this.engine}}
       @piece-moved=${({ detail: { from, to } }: PieceMovedEvent) => this.engine.move(from, to)}
       @spot-destroyed=${({ detail }: SpotDestroyedEvent) => this.engine.destroy(detail)}
       @piece-picked=${() => this.setAttribute('dragging', '')}

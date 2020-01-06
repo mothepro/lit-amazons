@@ -1,10 +1,7 @@
-import { customElement, LitElement, property, html, css, PropertyValues } from 'lit-element'
+import { customElement, LitElement, property, html, css } from 'lit-element'
 import { styleMap } from 'lit-html/directives/style-map.js'
 import Engine, { Position, Spot, Action } from '@mothepro/amazons-engine'
 
-export type TurnStartedEvent = CustomEvent<Spot.BLACK | Spot.WHITE>
-export type BoardChangedEvent = CustomEvent
-export type GameCompletedEvent = CustomEvent<Spot.BLACK | Spot.WHITE>
 export type SpotDestroyedEvent = CustomEvent<Position>
 export type PiecePickedEvent = CustomEvent<{
   color: Spot.BLACK | Spot.WHITE
@@ -19,14 +16,15 @@ export type PieceLetGoEvent = CustomEvent
 
 @customElement('lit-amazons')
 export default class extends LitElement {
+  /**
+   * The current state of the game.
+   * It will only take a few properties from the real game engine.
+   */
   @property()
-  private engine!: Engine
+  private engine!: Pick<Engine, 'actionNeeded' | 'destructible' | 'pieces' | 'current' | 'board'>
 
   /** The piece that is currently being dragged */
-  private picked?: {
-    startingPosition: Position
-    validMoves: Set<string>
-  }
+  private picked?: Position
 
   static readonly styles = css`
   :host {
@@ -35,32 +33,17 @@ export default class extends LitElement {
   }
   `
 
-  async updated(oldProps: PropertyValues) {
-    if (oldProps.has('engine')) {
-      this.engine.boardChanged.on(() => this.requestUpdate() && this.dispatchEvent(new CustomEvent('board-changed')))
-      this.engine.stateChange.on(() => this.requestUpdate())
-      this.engine.turn.on(detail => this.dispatchEvent(new CustomEvent('turn-started', { detail })))
-      this.engine.moved.on(detail => {
-        this.picked = {
-          startingPosition: detail.position,
-          validMoves: new Set([...detail.destructible].map(pos => pos.toString())),
-        }
-        this.requestUpdate()
-      })
-      await this.engine.stateChange.next
-      this.requestUpdate()
-    }
-  }
-
-  /** Whether a spot on the board (piece) can be moved. */
-  protected canMove = ([x, y]: Position) =>
-    this.engine.actionNeeded == Action.MOVE
-    && this.engine.current == this.engine.board[y][x]
-    && this.engine.pieces.has([x, y].toString())
-
   /** Whether a spot is valid to be played on in this state. */
-  protected isValid = ([x, y]: Position) =>
-    this.picked?.validMoves.has([x, y].toString()) ?? false
+  protected isValid = ([x, y]: Position) => {
+    switch (this.engine.actionNeeded) {
+      case Action.DESTROY:
+        return this.engine.destructible.has([x, y])
+      
+      case Action.MOVE:
+        return this.engine.pieces.get(this.picked?.toString() ?? '')?.moves.has([x, y]) ?? false
+    }
+    return false
+  }
 
   /** Gets the position from an Event's target. */
   protected getPosition = ({ target }: Event): Position => [
@@ -71,35 +54,24 @@ export default class extends LitElement {
   /** Attempt to destory a spot on the board. */
   protected destroy(event: MouseEvent) {
     const position = this.getPosition(event)
-    if (this.engine.actionNeeded == Action.DESTROY && this.picked?.validMoves.has(position.toString())) {
-      delete this.picked
+    if (this.engine.actionNeeded == Action.DESTROY && this.isValid(position))
       this.dispatchEvent(new CustomEvent('spot-destroyed', { detail: position }))
-    }
   }
 
-  protected pickupPiece(event: DragEvent) {
-    const detail = this.engine.pieces.get(this.getPosition(event).toString())!
-    this.picked = {
-      startingPosition: detail.position,
+  protected canPickupPiece = ([x, y]: Position) =>
+    this.engine.actionNeeded == Action.MOVE
+    && this.engine.current == this.engine.board[y][x]
+    && this.engine.pieces.has([x, y].toString())
 
-      // stringify the positions so we can check valid positions in constant time
-      // This is because [] !== []. Set's use this comparision.
-      validMoves: new Set([...detail.moves].map(pos => pos.toString())),
-    }
-    this.dispatchEvent(new CustomEvent('piece-picked', { detail }))
+  protected pickupPiece(event: DragEvent) {
+    this.dispatchEvent(new CustomEvent('piece-picked', { detail: this.picked = this.getPosition(event) }))
     this.requestUpdate()
   }
 
-  /** Currently dragging a piece over a potential spot. `preventDefault` to mark as valid. */
-  protected checkSpotValid = (event: DragEvent) =>
-    this.picked?.validMoves.has(this.getPosition(event)!.toString())
-    && event.preventDefault()
-
-  /** A piece has been dropped to a valid position */
   protected dropPiece(event: DragEvent) {
     this.dispatchEvent(new CustomEvent('piece-moved', {
       detail: {
-        from: this.picked!.startingPosition,
+        from: this.picked,
         to: this.getPosition(event)!
       }
     }))
@@ -117,15 +89,15 @@ export default class extends LitElement {
     <div
       part="spot spot-${spot} spot-${this.isValid([x, y]) ? 'valid' : 'invalid'} spot-x-${x} spot-y-${y} spot-parity-${y % 2 == x % 2 ? 'same' : 'different'}"
       x=${x} y=${y}
-      @dragover=${this.checkSpotValid}
+      @dragover=${(event: DragEvent) => this.isValid([x, y]) && event.preventDefault()}
       @dragend=${this.letGoPiece}
       @drop=${this.dropPiece}
       @click=${this.destroy}
       style=${styleMap({ gridArea: `${y + 1} / ${x + 1}` })}>
       ${spot == Spot.DESTROYED || spot == Spot.BLACK || spot == Spot.WHITE ? html`
         <span
-          part="symbol symbol-${spot} symbol-${this.canMove([x, y]) ? 'draggable' : 'not-draggable'}"
-          draggable=${this.canMove([x, y]).toString() as 'true' | 'false'}
+          part="symbol symbol-${spot} symbol-${this.canPickupPiece([x, y]) ? 'draggable' : 'not-draggable'}"
+          draggable=${this.canPickupPiece([x, y]).toString() as 'true' | 'false'}
           x=${x} y=${y}
           @dragstart=${this.pickupPiece}
         ></span>` : ''}
