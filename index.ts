@@ -47,8 +47,6 @@ export default class extends LitElement {
         }
         this.requestUpdate()
       })
-      this.engine.winner.once(detail => this.dispatchEvent(new CustomEvent('game-completed', { detail })))
-      this.engine.start()
       await this.engine.stateChange.next
       this.requestUpdate()
     }

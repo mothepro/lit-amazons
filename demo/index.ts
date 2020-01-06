@@ -14,7 +14,7 @@ export default class extends LitElement {
   static readonly styles = css`
   :host {
     display: block;
-    text-align: center
+    text-align: center;
   }
 
   :host lit-confetti {
@@ -70,6 +70,16 @@ export default class extends LitElement {
   }
   `
 
+  async firstUpdated() {
+    this.engine.winner.once(() => {
+      this.confetti = 150
+      this.requestUpdate() // Must update to show new value
+      setTimeout(() => !(this.confetti = 0) && this.requestUpdate(), 10000)
+    })
+    
+    this.engine.start()
+  }
+
   protected readonly render = () => html`
     <lit-amazons
       .engine=${this.engine}
@@ -77,11 +87,6 @@ export default class extends LitElement {
       @spot-destroyed=${({ detail }: SpotDestroyedEvent) => this.engine.destroy(detail)}
       @piece-picked=${() => this.setAttribute('dragging', '')}
       @piece-let-go=${() => this.removeAttribute('dragging')}
-      @game-completed=${() => {
-        this.confetti = 150
-        this.requestUpdate() // Must update to show new value
-        setTimeout(() => !(this.confetti = 0) && this.requestUpdate(), 10000)
-      }}
     ></lit-amazons>
     <lit-confetti count=${this.confetti} gravity=1></lit-confetti>
     `
