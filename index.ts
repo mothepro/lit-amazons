@@ -1,6 +1,6 @@
 import { customElement, LitElement, property, html, css } from 'lit-element'
 import { styleMap } from 'lit-html/directives/style-map.js'
-import Engine, { Position, Spot, Action } from '@mothepro/amazons-engine'
+import Engine, { Position, Spot, State } from '@mothepro/amazons-engine'
 
 export type SpotDestroyedEvent = CustomEvent<Position>
 export type PiecePickedEvent = CustomEvent<{
@@ -21,7 +21,7 @@ export default class extends LitElement {
    * It will only take a few properties from the real game engine.
    */
   @property()
-  private engine!: Pick<Engine, 'actionNeeded' | 'destructible' | 'pieces' | 'current' | 'board'>
+  private engine!: Pick<Engine, 'state' | 'destructible' | 'pieces' | 'current' | 'board'>
 
   /** The piece that is currently being dragged */
   private picked?: Position
@@ -35,12 +35,12 @@ export default class extends LitElement {
 
   /** Whether a spot is valid to be played on in this state. */
   protected isValid = ([x, y]: Position) => {
-    switch (this.engine.actionNeeded) {
-      case Action.DESTROY:
+    switch (this.engine.state) {
+      case State.DESTROY:
         return this.engine.destructible.has([x, y])
       
-      case Action.MOVE:
-        return this.engine.pieces.get(this.picked?.toString() ?? '')?.moves.has([x, y]) ?? false
+      case State.MOVE:
+        return this.engine.pieces.get(this.picked!)?.moves.has([x, y]) ?? false
     }
     return false
   }
@@ -54,14 +54,14 @@ export default class extends LitElement {
   /** Attempt to destory a spot on the board. */
   protected destroy(event: MouseEvent) {
     const position = this.getPosition(event)
-    if (this.engine.actionNeeded == Action.DESTROY && this.isValid(position))
+    if (this.engine.state == State.DESTROY && this.isValid(position))
       this.dispatchEvent(new CustomEvent('spot-destroyed', { detail: position }))
   }
 
   protected canPickupPiece = ([x, y]: Position) =>
-    this.engine.actionNeeded == Action.MOVE
+    this.engine.state == State.MOVE
     && this.engine.current == this.engine.board[y][x]
-    && this.engine.pieces.has([x, y].toString())
+    && this.engine.pieces.has([x, y])
 
   protected pickupPiece(event: DragEvent) {
     this.dispatchEvent(new CustomEvent('piece-picked', { detail: this.picked = this.getPosition(event) }))
