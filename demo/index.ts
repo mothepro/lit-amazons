@@ -74,13 +74,11 @@ export default class extends LitElement {
   }`
 
   async firstUpdated() {
-    this.engine.stateChange.on(state => this.state = state)
-    this.engine.winner.once(() => {
-      this.confetti = 150
-      setTimeout(() => this.confetti = 0, 10000)
-    })
-
     this.engine.start()
+    for await (const state of this.engine.stateChange)
+      this.state = state
+    this.confetti = 150
+    setTimeout(() => this.confetti = 0, 10 * 1000)
   }
 
   protected readonly render = () => html`

@@ -18,14 +18,14 @@
     esutils "^2.0.2"
     js-tokens "^4.0.0"
 
-"@mothepro/amazons-engine@^0.0.9":
-  version "0.0.9"
-  resolved "https://registry.yarnpkg.com/@mothepro/amazons-engine/-/amazons-engine-0.0.9.tgz#853277697b41e41be5d3cd1a3579ccb7067e395b"
-  integrity sha512-g7tEO7T5z0Kx+PDQmWq0CuXk6bIKJIVM1H4gfwKlIhMSZ5JhAAq7YTWHKFfyVaBGfEzUZuHBtzROYpypDVaRBw==
+"@mothepro/amazons-engine@^0.0.10":
+  version "0.0.10"
+  resolved "https://registry.yarnpkg.com/@mothepro/amazons-engine/-/amazons-engine-0.0.10.tgz#91c57ec050b442485200076d201c1c3e8d7728f3"
+  integrity sha512-VQAg6xjLl4SexfJ+tAZ1sHJuO7al+HCykv+0f1cHXly85TzFlaBRYJ+tgcvMCfyAzqcd2aCV+FGd5AbDBI/v/g==
   dependencies:
     "@mothepro/loose-map" "^1.0.0"
     "@mothepro/loose-set" "^1.0.0"
-    fancy-emitter "^1.3.2"
+    fancy-emitter "^1.5.1"
 
 "@mothepro/loose-map@^1.0.0":
   version "1.0.0"
@@ -858,10 +858,10 @@ extsprintf@^1.2.0:
   resolved "https://registry.yarnpkg.com/extsprintf/-/extsprintf-1.4.0.tgz#e2689f8f356fad62cca65a3a91c5df5f9551692f"
   integrity sha1-4mifjzVvrWLMplo6kcXfX5VRaS8=
 
-fancy-emitter@^1.3.2:
-  version "1.3.2"
-  resolved "https://registry.yarnpkg.com/fancy-emitter/-/fancy-emitter-1.3.2.tgz#2078810298cc2487a0b2f3f5c20d86f9da62deb4"
-  integrity sha512-jjVUpTTsdmxiyjydsVV6BebNTgmslI4KC+LQAU25/e+Pk+2+HpoV89QlKhjB0+i2UY4FR8iYrmvb6pAY/pVZyw==
+fancy-emitter@^1.5.1:
+  version "1.5.1"
+  resolved "https://registry.yarnpkg.com/fancy-emitter/-/fancy-emitter-1.5.1.tgz#0a225e4beed3f83e64fb4d258d3041bc00fb3900"
+  integrity sha512-P+0iK+vM/R7jFKMtbfJzJXTwFGczwi6U0rgP0Fz3hJdNuI3ZnbgR7m22LwWmw7DHKcqJvpUtZN7QgE397l+tHw==
 
 fast-deep-equal@^2.0.1:
   version "2.0.1"
@@ -1684,10 +1684,22 @@ lit-element@^2.2.1:
   dependencies:
     lit-html "^1.0.0"
 
+lit-element@^2.3.1:
+  version "2.3.1"
+  resolved "https://registry.yarnpkg.com/lit-element/-/lit-element-2.3.1.tgz#73343b978fa1e73d60526c6bb6ad60f53a16c343"
+  integrity sha512-tOcUAmeO3BzwiQ7FGWdsshNvC0HVHcTFYw/TLIImmKwXYoV0E7zCBASa8IJ7DiP4cen/Yoj454gS0qqTnIGsFA==
+  dependencies:
+    lit-html "^1.1.1"
+
 lit-html@^1.0.0:
   version "1.1.2"
   resolved "https://registry.yarnpkg.com/lit-html/-/lit-html-1.1.2.tgz#2e3560a7075210243649c888ad738eaf0daa8374"
   integrity sha512-FFlUMKHKi+qG1x1iHNZ1hrtc/zHmfYTyrSvs3/wBTvaNtpZjOZGWzU7efGYVpgp6KvWeKF6ql9/KsCq6Z/mEDA==
+
+lit-html@^1.1.1:
+  version "1.2.1"
+  resolved "https://registry.yarnpkg.com/lit-html/-/lit-html-1.2.1.tgz#1fb933dc1e2ddc095f60b8086277d4fcd9d62cc8"
+  integrity sha512-GSJHHXMGLZDzTRq59IUfL9FCdAlGfqNp/dEa7k7aBaaWD+JKaCjsAk9KYm2V12ItonVaYx2dprN66Zdm1AuBTQ==
 
 load-json-file@^4.0.0:
   version "4.0.0"
@@ -3090,10 +3102,10 @@ type-fest@^0.8.1:
   resolved "https://registry.yarnpkg.com/type-fest/-/type-fest-0.8.1.tgz#09e249ebde851d3b1e48d27c105444667f17b83d"
   integrity sha512-4dbzIzqvjtgiM5rw1k5rEHtBANKmdudhGyBEajN01fEyhaAIhsoKNy6y7+IN93IfpFtwY9iqi7kD+xwKhQsNJA==
 
-typescript@^3.7.4:
-  version "3.7.4"
-  resolved "https://registry.yarnpkg.com/typescript/-/typescript-3.7.4.tgz#1743a5ec5fef6a1fa9f3e4708e33c81c73876c19"
-  integrity sha512-A25xv5XCtarLwXpcDNZzCGvW2D1S3/bACratYBx2sax8PefsFhlYmkQicKHvpYflFS8if4zne5zT5kpJ7pzuvw==
+typescript@^3.9.3:
+  version "3.9.3"
+  resolved "https://registry.yarnpkg.com/typescript/-/typescript-3.9.3.tgz#d3ac8883a97c26139e42df5e93eeece33d610b8a"
+  integrity sha512-D/wqnB2xzNFIcoBG9FG8cXRDjiqSTbG2wd8DMZeQyJlP1vfTkIxH4GKveWaEBYySKIg+USu+E+EDIR47SqnaMQ==
 
 unique-string@^1.0.0:
   version "1.0.0"

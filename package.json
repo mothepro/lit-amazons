@@ -35,7 +35,9 @@
     "build:esm": "tsc -p tsconfig.esm.json"
   },
   "devDependencies": {
-    "@mothepro/amazons-engine": "^0.0.9",
+    "@mothepro/amazons-engine": "^0.0.10",
+    "@mothepro/loose-map": "^1.0.0",
+    "@mothepro/loose-set": "^1.0.0",
     "@types/mocha": "^5.2.7",
     "@types/should-sinon": "^0.0.5",
     "gh-pages": "^2.1.1",
@@ -47,9 +49,9 @@
     "should": "^13.2.3",
     "should-sinon": "^0.0.6",
     "sinon": "^8.0.2",
-    "typescript": "^3.7.4"
+    "typescript": "^3.9.3"
   },
   "dependencies": {
-    "lit-element": "^2.2.1"
+    "lit-element": "^2.3.1"
   }
 }

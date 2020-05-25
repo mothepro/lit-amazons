@@ -1,8 +1,9 @@
 import { customElement, LitElement, property, html, css } from 'lit-element'
 import { styleMap } from 'lit-html/directives/style-map.js'
-import Engine, { Position, Spot, State } from '@mothepro/amazons-engine'
+import type LooseMap from '@mothepro/loose-map'
+import type LooseSet from '@mothepro/loose-set'
+import type { Position, Board, Color, State, Spot } from '@mothepro/amazons-engine'
 
-export type SpotDestroyedEvent = CustomEvent<Position>
 export type PiecePickedEvent = CustomEvent<{
   color: Spot.BLACK | Spot.WHITE
   position: Position
@@ -83,8 +84,7 @@ export default class extends LitElement {
     this.requestUpdate()
   }
 
-  protected readonly render = () => this.engine && html`
-    ${this.engine.board.map((row, y) => row.map((spot, x) => html`
+  protected readonly render = () => html`${this.engine?.board.map((row, y) => row.map((spot, x) => html`
     <div
       part="spot
         spot-x-${x} spot-y-${y}
@@ -96,12 +96,16 @@ export default class extends LitElement {
       @dragend=${this.letGoPiece}
       @drop=${this.dropPiece}
       @click=${this.destroy}
-      style=${styleMap({ gridArea: `${y + 1} / ${x + 1}` })}>
+      style=${styleMap({
+        gridArea: `${y + 1} / ${x + 1}`
+      })}>
       ${spot == Spot.DESTROYED || spot == Spot.BLACK || spot == Spot.WHITE ? html`
         <span
-          part="symbol symbol-${spot} symbol-${this.canPickupPiece([x, y]) ? 'draggable' : 'not-draggable'}"
-          draggable=${this.canPickupPiece([x, y]).toString() as 'true' | 'false'}
+          part="symbol
+            symbol-${spot}
+            symbol-${this.canPickupPiece([x, y]) ? 'draggable' : 'not-draggable'}"
           x=${x} y=${y}
+          draggable=${this.canPickupPiece([x, y]).toString() as 'true' | 'false'}
           @dragstart=${this.pickupPiece}
         ></span>` : ''}
     </div>`))}`
