@@ -12,7 +12,7 @@ export type PieceMovedEvent = CustomEvent<{
   from: Position,
   to: Position
 }>
-export type PieceLetGoEvent = CustomEvent
+export type PieceLetGoEvent = CustomEvent<void>
 
 @customElement('lit-amazons')
 export default class extends LitElement {
@@ -30,8 +30,7 @@ export default class extends LitElement {
   :host {
     display: grid;
     user-select: none;
-  }
-  `
+  }`
 
   /** Whether a spot is valid to be played on in this state. */
   protected isValid = ([x, y]: Position) => {
@@ -87,7 +86,11 @@ export default class extends LitElement {
   protected readonly render = () => this.engine && html`
     ${this.engine.board.map((row, y) => row.map((spot, x) => html`
     <div
-      part="spot spot-${spot} spot-${this.isValid([x, y]) ? 'valid' : 'invalid'} spot-x-${x} spot-y-${y} spot-parity-${y % 2 == x % 2 ? 'same' : 'different'}"
+      part="spot
+        spot-x-${x} spot-y-${y}
+        spot-${spot}
+        spot-${this.isValid([x, y]) ? 'valid' : 'invalid'}
+        spot-parity-${y % 2 == x % 2 ? 'same' : 'different'}"
       x=${x} y=${y}
       @dragover=${(event: DragEvent) => this.isValid([x, y]) && event.preventDefault()}
       @dragend=${this.letGoPiece}
@@ -101,6 +104,5 @@ export default class extends LitElement {
           x=${x} y=${y}
           @dragstart=${this.pickupPiece}
         ></span>` : ''}
-    </div>`))}
-  `
+    </div>`))}`
 }

@@ -71,8 +71,7 @@ export default class extends LitElement {
   }
   :host ::part(symbol-4):before {
     content: '💥';
-  }
-  `
+  }`
 
   async firstUpdated() {
     this.engine.stateChange.on(state => this.state = state)
@@ -92,6 +91,5 @@ export default class extends LitElement {
       @piece-picked=${() => this.setAttribute('dragging', '')}
       @piece-let-go=${() => this.removeAttribute('dragging')}
     ></lit-amazons>
-    <lit-confetti count=${this.confetti} gravity=1></lit-confetti>
-    `
+    <lit-confetti count=${this.confetti} gravity=1></lit-confetti>`
 }
