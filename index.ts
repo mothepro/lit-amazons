@@ -4,8 +4,9 @@ import type LooseMap from '@mothepro/loose-map'
 import type LooseSet from '@mothepro/loose-set'
 import type { Position, Board, Color, State, Spot } from '@mothepro/amazons-engine'
 
+export type SpotDestroyedEvent = CustomEvent<Position>
 export type PiecePickedEvent = CustomEvent<{
-  color: Spot.BLACK | Spot.WHITE
+  color: Color
   position: Position
   moves: Set<Position>
 }>
@@ -15,14 +16,38 @@ export type PieceMovedEvent = CustomEvent<{
 }>
 export type PieceLetGoEvent = CustomEvent<void>
 
+declare global {
+  interface HTMLElementEventMap {
+    ['spot-destroyed']: SpotDestroyedEvent
+    ['piece-picked']: PiecePickedEvent
+    ['piece-moved']: PieceMovedEvent
+    ['piece-let-go']: PieceLetGoEvent
+  }
+}
+
 @customElement('lit-amazons')
 export default class extends LitElement {
-  /**
-   * The current state of the game.
-   * It will only take a few properties from the real game engine.
-   */
-  @property()
-  private engine!: Pick<Engine, 'state' | 'destructible' | 'pieces' | 'current' | 'board'>
+  /** Whether the actions can not be preformed by the current user. */
+  @property({ type: Boolean })
+  ignore = false
+
+  @property({ type: Number })
+  state = State.START
+
+  @property({ type: Number })
+  current: Color = Spot.BLACK
+
+  @property({ attribute: false })
+  destructible?: LooseSet<Position>
+
+  @property({ attribute: false })
+  pieces?: LooseMap<Position, {
+    color: Color,
+    moves: LooseSet<Position>
+  }>
+
+  @property({ type: Array })
+  board: Board = []
 
   /** The piece that is currently being dragged */
   private picked?: Position
@@ -35,12 +60,12 @@ export default class extends LitElement {
 
   /** Whether a spot is valid to be played on in this state. */
   protected isValid = ([x, y]: Position) => {
-    switch (this.engine.state) {
+    switch (this.state) {
       case State.DESTROY:
-        return this.engine.destructible.has([x, y])
-      
+        return this.destructible?.has([x, y]) ?? false
+
       case State.MOVE:
-        return this.engine.pieces.get(this.picked!)?.moves.has([x, y]) ?? false
+        return this.pieces?.get(this.picked!)?.moves.has([x, y]) ?? false
     }
     return false
   }
@@ -53,15 +78,16 @@ export default class extends LitElement {
 
   /** Attempt to destory a spot on the board. */
   protected destroy(event: MouseEvent) {
-    const position = this.getPosition(event)
-    if (this.engine.state == State.DESTROY && this.isValid(position))
-      this.dispatchEvent(new CustomEvent('spot-destroyed', { detail: position }))
+    const detail = this.getPosition(event)
+    if (!this.ignore && this.state == State.DESTROY && this.isValid(detail))
+      this.dispatchEvent(new CustomEvent('spot-destroyed', { detail }))
   }
 
-  protected canPickupPiece = ([x, y]: Position) =>
-    this.engine.state == State.MOVE
-    && this.engine.current == this.engine.board[y][x]
-    && this.engine.pieces.has([x, y])
+  protected canPickupPiece = ([x, y]: Position) => !this.ignore
+    && !!this.board && !!this.pieces // shouldn't be needed
+    && this.state == State.MOVE
+    && this.current == this.board[y][x]
+    && this.pieces?.has([x, y])
 
   protected pickupPiece(event: DragEvent) {
     this.dispatchEvent(new CustomEvent('piece-picked', { detail: this.picked = this.getPosition(event) }))
@@ -84,7 +110,7 @@ export default class extends LitElement {
     this.requestUpdate()
   }
 
-  protected readonly render = () => html`${this.engine?.board.map((row, y) => row.map((spot, x) => html`
+  protected readonly render = () => html`${this.board?.map((row, y) => row.map((spot, x) => html`
     <div
       part="spot
         spot-x-${x} spot-y-${y}

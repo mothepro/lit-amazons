@@ -1,19 +1,20 @@
-import Engine from '@mothepro/amazons-engine'
-import { customElement, LitElement, html, css, property } from 'lit-element'
+import Engine, { Spot, Color } from '@mothepro/amazons-engine'
+import { customElement, LitElement, html, css, internalProperty } from 'lit-element'
+import type { PieceMovedEvent, SpotDestroyedEvent } from '../index.js'
 import 'lit-confetti'
 import '../index.js'
-import { PieceMovedEvent, SpotDestroyedEvent } from '../index.js' // Seperate import since this is only for types
 
-@customElement('amazons-demo')
+const asString = (color: Color) => color == Spot.BLACK
+  ? 'Black'
+  : 'White'
+
+@customElement('amazons-offline-demo')
 export default class extends LitElement {
 
   protected engine = new Engine
 
-  @property({ attribute: false })
+  @internalProperty()
   protected confetti = 0
-
-  @property({ reflect: true })
-  protected state = 0
 
   static readonly styles = css`
   :host {
@@ -50,6 +51,10 @@ export default class extends LitElement {
     cursor: grab;
   }
 
+  :host ::part(symbol-draggable):active {
+    color: red;
+  }
+
   :host([dragging]) ::part(symbol-draggable) {
     cursor: grabbing;
   }
@@ -76,14 +81,22 @@ export default class extends LitElement {
   async firstUpdated() {
     this.engine.start()
     for await (const state of this.engine.stateChange)
-      this.state = state
+      this.requestUpdate()
     this.confetti = 150
     setTimeout(() => this.confetti = 0, 10 * 1000)
   }
 
   protected readonly render = () => html`
+    <h1>${this.engine.stateChange.isAlive
+      ? `${asString(this.engine.current)}'s turn`
+      : `${asString(this.engine.waiting)} Wins!`
+    }</h1>
     <lit-amazons
-      .engine=${{ ...this.engine }}
+      state=${this.engine.state}
+      current=${this.engine.current}
+      .destructible=${this.engine.destructible}
+      .pieces=${this.engine.pieces}
+      .board=${this.engine.board}
       @piece-moved=${({ detail: { from, to } }: PieceMovedEvent) => this.engine.move(from, to)}
       @spot-destroyed=${({ detail }: SpotDestroyedEvent) => this.engine.destroy(detail)}
       @piece-picked=${() => this.setAttribute('dragging', '')}
