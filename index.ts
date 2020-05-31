@@ -1,8 +1,8 @@
 import { customElement, LitElement, property, html, css } from 'lit-element'
 import { styleMap } from 'lit-html/directives/style-map.js'
+import { Position, Board, Color, State, Spot } from '@mothepro/amazons-engine'
 import type LooseMap from '@mothepro/loose-map'
 import type LooseSet from '@mothepro/loose-set'
-import type { Position, Board, Color, State, Spot } from '@mothepro/amazons-engine'
 
 export type SpotDestroyedEvent = CustomEvent<Position>
 export type PiecePickedEvent = CustomEvent<{
@@ -32,7 +32,7 @@ export default class extends LitElement {
   ignore = false
 
   @property({ type: Number })
-  state = State.START
+  state = State.WAITING
 
   @property({ type: Number })
   current: Color = Spot.BLACK

@@ -1,6 +1,7 @@
 import Engine, { Spot, Color } from '@mothepro/amazons-engine'
 import { customElement, LitElement, html, css, internalProperty } from 'lit-element'
 import type { PieceMovedEvent, SpotDestroyedEvent } from '../index.js'
+
 import 'lit-confetti'
 import '../index.js'
 
