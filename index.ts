@@ -1,53 +1,107 @@
-import { customElement, LitElement, html, css } from 'lit-element'
+import Engine, { Spot, Color } from '@mothepro/amazons-engine'
+import { customElement, LitElement, html, css, internalProperty } from 'lit-element'
+import type { PieceMovedEvent, SpotDestroyedEvent } from '../index.js'
+
 import 'lit-confetti'
 import '../index.js'
 
-@customElement('amazons-demo')
+const asString = (color: Color) => color == Spot.BLACK
+  ? 'Black'
+  : 'White'
+
+@customElement('amazons-offline-demo')
 export default class extends LitElement {
 
-  protected confetti = 0
+  protected engine = new Engine
 
-  protected handle?: NodeJS.Timeout
+  @internalProperty()
+  protected confetti = 0
 
   static readonly styles = css`
   :host {
     display: block;
-    border: thin solid black;
+    text-align: center;
+  }
+
+  :host lit-confetti {
+    position: fixed;
   }
 
   :host lit-amazons {
-    font-size: 5em;
     grid-auto-rows: 1fr;
     grid-auto-columns: 1fr;
+
+    border: thin solid black;
+    width: 1000px;
+    height: 1000px;
   }
   
-  :host ::part(parity-same) {
-    background-color: grey;
+  :host ::part(spot) {
+    width: 100%
   }
   
-  :host ::part(valid) {
+  :host ::part(spot-parity-same) {
+    background-color: lightgrey;
+  }
+
+  :host ::part(symbol) {
+    font-size: 5em;
+  }
+
+  :host ::part(symbol-draggable) {
+    cursor: grab;
+  }
+
+  :host ::part(symbol-draggable):active {
+    color: red;
+  }
+
+  :host([dragging]) ::part(symbol-draggable) {
+    cursor: grabbing;
+  }
+  
+  :host ::part(spot-valid) {
     background-color: yellow;
   }
-  `
 
-  protected finished() {
+  :host ::part(spot-valid):hover {
+    cursor: pointer;
+    border: thin solid red;
+  }
+
+  :host ::part(symbol-1):before {
+    content: '♛';
+  }
+  :host ::part(symbol-2):before {
+    content: '♕';
+  }
+  :host ::part(symbol-4):before {
+    content: '💥';
+  }`
+
+  async firstUpdated() {
+    this.engine.start()
+    for await (const state of this.engine.stateChange)
+      this.requestUpdate()
     this.confetti = 150
-    this.requestUpdate()
-
-    // Display confetti for 5 seconds, before starting to remove it
-    setTimeout(() =>
-      this.handle = setInterval(() => {
-        if (0 == --this.confetti)
-          clearInterval(this.handle!)
-        this.requestUpdate()
-      }, 100),
-      5000)
+    setTimeout(() => this.confetti = 0, 10 * 1000)
   }
 
   protected readonly render = () => html`
+    <h1>${this.engine.stateChange.isAlive
+      ? `${asString(this.engine.current)}'s turn`
+      : `${asString(this.engine.waiting)} Wins!`
+    }</h1>
     <lit-amazons
-      @game-completed=${this.finished}
+      state=${this.engine.state}
+      current=${this.engine.current}
+      .destructible=${this.engine.destructible}
+      .pieces=${this.engine.pieces}
+      .board=${this.engine.board}
+      @piece-moved=${({ detail: { from, to } }: PieceMovedEvent) => this.engine.move(from, to)}
+      @spot-destroyed=${({ detail }: SpotDestroyedEvent) => this.engine.destroy(detail)}
+      @piece-picked=${() => this.setAttribute('dragging', '')}
+      @piece-let-go=${() => this.removeAttribute('dragging')}
     ></lit-amazons>
-    <lit-confetti count=${this.confetti} gravity=1></lit-confetti>
-  `
+    <lit-confetti count=${this.confetti} gravity=1></lit-confetti>`
 }
