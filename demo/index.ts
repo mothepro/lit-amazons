@@ -60,7 +60,7 @@ export default class extends LitElement {
     cursor: grabbing;
   }
   
-  :host ::part(spot-valid) {
+  :host :not([ignore])::part(spot-valid) {
     background-color: yellow;
   }
 

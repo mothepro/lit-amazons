@@ -46,7 +46,7 @@ export default class extends LitElement {
     moves: LooseSet<Position>
   }>
 
-  @property({ type: Array })
+  @property({ type: Array, reflect: true })
   board: Board = []
 
   /** The piece that is currently being dragged */
