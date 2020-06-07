@@ -56,6 +56,15 @@ export default class extends LitElement {
   :host {
     display: grid;
     user-select: none;
+  }
+  :host [part~=symbol-1]:before {
+    content: var(--blackSpot);
+  }
+  :host [part~=symbol-2]:before {
+    content: var(--whiteSpot);
+  }
+  :host [part~=symbol-4]:before {
+    content: var(--destroyedSpot);
   }`
 
   /** Whether a spot is valid to be played on in this state. */

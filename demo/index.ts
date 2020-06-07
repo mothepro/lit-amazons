@@ -21,6 +21,10 @@ export default class extends LitElement {
   :host {
     display: block;
     text-align: center;
+    
+    --blackSpot: '♛';
+    --whiteSpot: '♕';
+    --destroyedSpot: '💥';
   }
 
   :host lit-confetti {
@@ -67,16 +71,6 @@ export default class extends LitElement {
   :host ::part(spot-valid):hover {
     cursor: pointer;
     border: thin solid red;
-  }
-
-  :host ::part(symbol-1):before {
-    content: '♛';
-  }
-  :host ::part(symbol-2):before {
-    content: '♕';
-  }
-  :host ::part(symbol-4):before {
-    content: '💥';
   }`
 
   async firstUpdated() {

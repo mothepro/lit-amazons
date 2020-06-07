@@ -22,5 +22,7 @@
   window = new Engine
 ```
 
+Take a look at the [demo](https://github.com/mothepro/lit-amazons/blob/master/demo/index.ts) for simple of usage.
+
 TODO...
 + Support drag and drop on mobile
