@@ -1,4 +1,4 @@
-# [Lit Amazons](//mothepro.github.io/lit-amazons)
+# [`<lit-amazons>`](//mothepro.github.io/lit-amazons)
 
 > Game of Amazons made with web components
 
