@@ -105,7 +105,7 @@ export default class extends LitElement {
   protected async updated(changed: PropertyValues) {
     if (changed.has('peers') && this.peers && this.peers.length == 2) {
       this.bindMessages(this.colorToPeer(Spot.BLACK)!, Spot.BLACK)
-      this.bindMessages(this.colorToPeer(Spot.WHITE)!, Spot.WHITE) 
+      this.bindMessages(this.colorToPeer(Spot.WHITE)!, Spot.WHITE)
     }
   }
 
@@ -169,7 +169,7 @@ export default class extends LitElement {
     }</h1>
     <lit-amazons
       part="game"
-      ?ignore=${!this.peers || this.peers[this.engine.current].isYou}
+      ?ignore=${!this.colorToPeer(this.engine.current)?.isYou ?? false}
       state=${this.engine.state}
       current=${this.engine.current}
       .destructible=${this.engine.destructible}
@@ -187,9 +187,12 @@ export default class extends LitElement {
     : 'White'
 
   /** Converts a */
-  private colorToPeer = (color: Color) => color == Spot.BLACK
-    ? this.peers![0]
-    : this.peers![1]
+  private colorToPeer: (color: Color) => Peer | undefined = (color: Color) =>
+    this.peers
+      ? color == Spot.BLACK
+        ? this.peers[0]
+        : this.peers[1]
+      : undefined
 
   // Note: board must be an 8x8 or smaller
   private posToBuf = (...pos: Position[]) => new Uint8Array(

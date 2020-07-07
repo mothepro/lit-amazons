@@ -7,6 +7,7 @@
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <title>Amazons Demo</title>
   <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500">
   <link rel="stylesheet" href="style.css">
   <script type="importmap-shim" src="import-map.json"></script>
   <!-- Production -->
@@ -44,12 +45,17 @@
       <div></div>
       <div></div>
     </div>
+
     <div slot="loading" class="loading">
-      hang on
       <div></div>
       <div></div>
     </div>
-    <div slot="disconnected">No longer connected</div>
+
+    <div slot="disconnected">
+      <p>Not connected to the Peer-to-Peer network. Try out the game locally!</p>
+      <p2p-amazons></p2p-amazons>
+    </div>
+    
     <p2p-amazons></p2p-amazons>
   </p2p-switch>
 </body>

@@ -1,8 +1,19 @@
+html {
+  font-family: Roboto, sans-serif;
+}
+
 h1 {
   text-align: center;
+  color: hsla(0, 0%, 0%, 0.87);
+  font-size: 3.75rem;
+  font-family: "Roboto", "Helvetica", "Arial", sans-serif;
+  font-weight: 300;
+  line-height: 1;
+  letter-spacing: -0.00833em;
+  margin-bottom: .35em;
 }
 .subtitle {
-  font-size: .3em;
+  font-size: 14px;
 }
 
 ::part(lobby) {
@@ -50,4 +61,10 @@ h1 {
     height: 80px;
     opacity: 0;
   }
+}
+
+/* Only show slots when state matches. Offline is okay... */
+p2p-switch:not([state="2"]) [slot="loading"],
+p2p-switch:not([state="-1"]) [slot="disconnected"] {
+  display: none;
 }
