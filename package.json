@@ -2,7 +2,7 @@
   "name": "@mothepro/lit-amazons",
   "description": "Game of Amazons made with web components",
   "author": "Maurice Prosper",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "license": "Apache-2.0",
   "main": "dist/npm/index.js",
   "sideEffects": false,
