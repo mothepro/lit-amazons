@@ -22,10 +22,6 @@
 </head>
 
 <body>
-  <h1>
-    Amazons
-    <span class="subtitle">by Mo</span>
-  </h1>
   <p2p-switch 
     local-storage
     max-peers="1"
@@ -56,7 +52,11 @@
       <p2p-amazons></p2p-amazons>
     </div>
     
-    <p2p-amazons></p2p-amazons>
+    <h1 class="not-p2p-ready">
+      Amazons
+      <span class="subtitle">by Mo</span>
+    </h1>
+    <p2p-amazons slot="p2p"></p2p-amazons>
   </p2p-switch>
 </body>
 

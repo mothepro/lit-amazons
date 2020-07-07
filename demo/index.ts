@@ -1,6 +1,6 @@
 import Engine, { Spot, Color, Position } from '@mothepro/amazons-engine'
-import type { Peer } from '@mothepro/fancy-p2p'
 import { customElement, LitElement, html, css, internalProperty, property, PropertyValues } from 'lit-element'
+import type { Peer } from '@mothepro/fancy-p2p'
 import type { PieceMovedEvent, SpotDestroyedEvent } from '../index.js'
 
 import 'lit-p2p'
@@ -109,11 +109,11 @@ export default class extends LitElement {
     }
   }
 
-  private async bindMessages({ message, name, close }: Peer<ArrayBuffer>, color: Color) {
+  private async bindMessages({ message, name, close }: Peer, color: Color) {
     try {
       for await (const data of message) {
-        if (this.engine.current != color)
-          throw Error(`${name} sent ${data} (${data.byteLength} bytes) when it isn't their turn`)
+        if (!(data instanceof ArrayBuffer) || this.engine.current != color)
+          throw Error(`${name} sent data when it isn't their turn: ${data}`)
 
         switch (data.byteLength) {
           case 1: // Destroy
@@ -156,12 +156,12 @@ export default class extends LitElement {
     this.peers
       // Online
       ? this.engine.stateChange.isAlive
-        ? this.colorToPeer(this.engine.current).isYou
+        ? this.colorToPeer(this.engine.current)!.isYou
           ? 'Your turn'
-          : `${this.colorToPeer(this.engine.current).name}'s turn`
-        : this.colorToPeer(this.engine.waiting).isYou
+          : `${this.colorToPeer(this.engine.current)!.name}'s turn`
+        : this.colorToPeer(this.engine.waiting)!.isYou
           ? 'You Win!'
-          : `${this.colorToPeer(this.engine.waiting).name} Wins!`
+          : `${this.colorToPeer(this.engine.waiting)!.name} Wins!`
       // Offline
       : this.engine.stateChange.isAlive
         ? `${this.colorAsString(this.engine.current)}'s turn`
@@ -169,7 +169,7 @@ export default class extends LitElement {
     }</h1>
     <lit-amazons
       part="game"
-      ?ignore=${!this.colorToPeer(this.engine.current)?.isYou ?? false}
+      ?ignore=${!(this.colorToPeer(this.engine.current)?.isYou ?? true)}
       state=${this.engine.state}
       current=${this.engine.current}
       .destructible=${this.engine.destructible}

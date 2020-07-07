@@ -2,7 +2,7 @@ html {
   font-family: Roboto, sans-serif;
 }
 
-h1 {
+h1, ::part(title) {
   text-align: center;
   color: hsla(0, 0%, 0%, 0.87);
   font-size: 3.75rem;
@@ -63,7 +63,10 @@ h1 {
   }
 }
 
-/* Only show slots when state matches. Offline is okay... */
+/* Only show slots when state matches. */
+p2p-switch[state="3"] .not-p2p-ready,
+p2p-switch:not([state="0"]) .p2p-offline,
+p2p-switch:not([state="3"]) .p2p-ready,
 p2p-switch:not([state="2"]) [slot="loading"],
 p2p-switch:not([state="-1"]) [slot="disconnected"] {
   display: none;
