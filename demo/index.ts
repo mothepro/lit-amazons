@@ -1,25 +1,28 @@
-import Engine, { Spot, Color } from '@mothepro/amazons-engine'
-import { customElement, LitElement, html, css, internalProperty } from 'lit-element'
+import Engine, { Spot, Color, Position } from '@mothepro/amazons-engine'
+import type { Peer } from '@mothepro/fancy-p2p'
+import { customElement, LitElement, html, css, internalProperty, property, PropertyValues } from 'lit-element'
 import type { PieceMovedEvent, SpotDestroyedEvent } from '../index.js'
 
+import 'lit-p2p'
 import 'lit-confetti'
 import '../index.js'
 
-const asString = (color: Color) => color == Spot.BLACK
-  ? 'Black'
-  : 'White'
-
-@customElement('amazons-offline-demo')
+@customElement('p2p-amazons')
 export default class extends LitElement {
 
   protected engine = new Engine
+
+  @property({ attribute: false })
+  peers?: Peer<ArrayBuffer>[]
+
+  @property({ attribute: false })
+  broadcast?: (data: ArrayBuffer, includeSelf?: boolean) => void
 
   @internalProperty()
   protected confetti = 0
 
   static readonly styles = css`
   :host {
-    display: block;
     text-align: center;
     
     --blackSpot: '♛';
@@ -91,7 +94,7 @@ export default class extends LitElement {
     }
   }`
 
-  async firstUpdated() {
+  protected async firstUpdated() {
     this.engine.start()
     for await (const state of this.engine.stateChange)
       this.requestUpdate()
@@ -99,21 +102,101 @@ export default class extends LitElement {
     setTimeout(() => this.confetti = 0, 10 * 1000)
   }
 
+  protected async updated(changed: PropertyValues) {
+    if (changed.has('peers') && this.peers && this.peers.length == 2) {
+      this.bindMessages(this.colorToPeer(Spot.BLACK)!, Spot.BLACK)
+      this.bindMessages(this.colorToPeer(Spot.WHITE)!, Spot.WHITE) 
+    }
+  }
+
+  private async bindMessages({ message, name, close }: Peer<ArrayBuffer>, color: Color) {
+    try {
+      for await (const data of message) {
+        if (this.engine.current != color)
+          throw Error(`${name} sent ${data} (${data.byteLength} bytes) when it isn't their turn`)
+
+        switch (data.byteLength) {
+          case 1: // Destroy
+            const [spot] = this.bufToPos(data)
+            this.engine.destroy(spot)
+            break
+
+          case 2: // Move
+            const [from, to] = this.bufToPos(data)
+            this.engine.move(from, to)
+            break
+
+          default:
+            throw Error(`Only expected 1 or 2 bytes, but ${name} sent ${data} (${data.byteLength} bytes)`)
+        }
+      }
+    } catch (err) {
+      console.error('Lost Connection with', name, err)
+    }
+    close()
+  }
+
+
+  private pieceMoved({ detail: { from, to } }: PieceMovedEvent) {
+    if (this.broadcast)
+      this.broadcast(this.posToBuf(from, to))
+    else
+      this.engine.move(from, to)
+  }
+
+  private spotDestroyed({ detail: spot }: SpotDestroyedEvent) {
+    if (this.broadcast)
+      this.broadcast(this.posToBuf(spot))
+    else
+      this.engine.destroy(spot)
+  }
+
   protected readonly render = () => html`
-    <h1>${this.engine.stateChange.isAlive
-      ? `${asString(this.engine.current)}'s turn`
-      : `${asString(this.engine.waiting)} Wins!`
+    <h1 part="title is-${this.engine.stateChange.isAlive ? 'ongoing' : 'over'}">${
+    this.peers
+      // Online
+      ? this.engine.stateChange.isAlive
+        ? this.colorToPeer(this.engine.current).isYou
+          ? 'Your turn'
+          : `${this.colorToPeer(this.engine.current).name}'s turn`
+        : this.colorToPeer(this.engine.waiting).isYou
+          ? 'You Win!'
+          : `${this.colorToPeer(this.engine.waiting).name} Wins!`
+      // Offline
+      : this.engine.stateChange.isAlive
+        ? `${this.colorAsString(this.engine.current)}'s turn`
+        : `${this.colorAsString(this.engine.waiting)} Wins!`
     }</h1>
     <lit-amazons
+      part="game"
+      ?ignore=${!this.peers || this.peers[this.engine.current].isYou}
       state=${this.engine.state}
       current=${this.engine.current}
       .destructible=${this.engine.destructible}
       .pieces=${this.engine.pieces}
       .board=${this.engine.board}
-      @piece-moved=${({ detail: { from, to } }: PieceMovedEvent) => this.engine.move(from, to)}
-      @spot-destroyed=${({ detail }: SpotDestroyedEvent) => this.engine.destroy(detail)}
-      @piece-picked=${() => this.setAttribute('dragging', '')}
-      @piece-let-go=${() => this.removeAttribute('dragging')}
+      @piece-moved=${this.pieceMoved}
+      @spot-destroyed=${this.spotDestroyed}
     ></lit-amazons>
     <lit-confetti count=${this.confetti} gravity=1></lit-confetti>`
+
+  // TODO: Make the following static
+
+  private colorAsString = (color: Color) => color == Spot.BLACK
+    ? 'Black'
+    : 'White'
+
+  /** Converts a */
+  private colorToPeer = (color: Color) => color == Spot.BLACK
+    ? this.peers![0]
+    : this.peers![1]
+
+  // Note: board must be an 8x8 or smaller
+  private posToBuf = (...pos: Position[]) => new Uint8Array(
+    pos.map(([x, y]) => x | y << 4))
+
+  private bufToPos = (data: ArrayBuffer) => [...new Uint8Array(data)].map(byte => ([
+    byte & 0b0000_1111,
+    byte >> 4,
+  ] as Position))
 }

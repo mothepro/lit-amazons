@@ -5,19 +5,60 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
-  <title>Lit Amazons Demo</title>
+  <title>Amazons Demo</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="style.css">
   <script type="importmap-shim" src="import-map.json"></script>
   <!-- Production -->
   <script prod-only type=prod-only-module src="//unpkg.com/es-module-shims@0.4.6/dist/es-module-shims.min.js"></script>
   <script prod-only type=prod-only-module-shim src="//unpkg.com/@mothepro/lit-amazons/dist/esm/demo/index.js"></script>
+  <script prod-only type=prod-only-application/javascript async
+    src="https://www.googletagmanager.com/gtag/js?id=UA-48191613-7"></script>
   <!-- Development -->
-  <script dev-only type=application/javascript src="//unpkg.com/typescript@3.9.3/lib/typescript.js"></script>
+  <script dev-only type=application/javascript src="//unpkg.com/typescript/lib/typescript.js"></script>
   <script dev-only type=module src="//unpkg.com/@mothepro/es-module-shims@0.0.0/dist/es-module-shims.min.js"></script>
   <script dev-only type=module-shim src="index.ts"></script>
 </head>
 
 <body>
-  <amazons-offline-demo></amazons-offline-demo>
+  <h1>
+    Amazons
+    <span class="subtitle">by Mo</span>
+  </h1>
+  <p2p-switch 
+    local-storage
+    max-peers="1"
+    signaling="wss://ws.parkshade.com:443"
+    version="0.3.2"
+    retries="3"
+    timeout="5000"
+    stuns='[
+      "stun:stun.stunprotocol.org",
+      "stun:stun.l.google.com:19302",
+      "stun:stun1.l.google.com:19302",
+      "stun:stun2.l.google.com:19302",
+      "stun:stun3.l.google.com:19302",
+      "stun:stun4.l.google.com:19302"
+    ]'>
+    <div slot="offline" class="loading">
+      <div></div>
+      <div></div>
+    </div>
+    <div slot="loading" class="loading">
+      hang on
+      <div></div>
+      <div></div>
+    </div>
+    <div slot="disconnected">No longer connected</div>
+    <p2p-amazons></p2p-amazons>
+  </p2p-switch>
 </body>
+
+<script>
+  window.dataLayer = window.dataLayer || []
+  function gtag() { dataLayer.push(arguments) }
+  gtag('js', new Date())
+  gtag('config', 'UA-48191613-7')
+</script>
 
 </html>
