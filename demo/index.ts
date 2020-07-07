@@ -36,41 +36,59 @@ export default class extends LitElement {
     grid-auto-columns: 1fr;
 
     border: thin solid black;
-    width: 1000px;
-    height: 1000px;
+    margin: 0 auto;
+    width: 100%;
+    max-width: 1000px;
+    max-height: 1000px;
+  }
+
+  :host lit-amazons[dragging], :host ::part(symbol-draggable) {
+    cursor: grabbing;
   }
   
   :host ::part(spot) {
     width: 100%
   }
-  
   :host ::part(spot-parity-same) {
     background-color: lightgrey;
   }
-
-  :host ::part(symbol) {
-    font-size: 5em;
-  }
-
   :host ::part(symbol-draggable) {
     cursor: grab;
   }
-
   :host ::part(symbol-draggable):active {
     color: red;
   }
-
-  :host([dragging]) ::part(symbol-draggable) {
-    cursor: grabbing;
-  }
-  
   :host :not([ignore])::part(spot-valid) {
     background-color: yellow;
   }
-
   :host ::part(spot-valid):hover {
     cursor: pointer;
     border: thin solid red;
+  }
+
+  /* Symbol Sizing */
+  :host ::part(symbol) {
+    font-size: 1em;
+  }
+  @media (min-width: 576px) { /* bootstrap "sm" */
+    :host ::part(symbol) {
+      font-size: 2em;
+    }
+  }
+  @media (min-width: 768px) { /* bootstrap "md" */
+    :host ::part(symbol) {
+      font-size: 3em;
+    }
+  }
+  @media (min-width: 992px) { /* bootstrap "lg" */
+    :host ::part(symbol) {
+      font-size: 4em;
+    }
+  }
+  @media (min-width: 1200px) { /* bootstrap "xl" */
+    :host ::part(symbol) {
+      font-size: 5em;
+    }
   }`
 
   async firstUpdated() {
