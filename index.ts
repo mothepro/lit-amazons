@@ -98,19 +98,17 @@ export default class extends LitElement {
     && this.current == this.board[y][x]
     && this.pieces?.has([x, y])
 
-  protected pickupPiece(event: DragEvent) {
+  protected pickupPiece(event: DragEvent | TouchEvent) {
     this.dispatchEvent(new CustomEvent('piece-picked', { detail: this.picked = this.getPosition(event) }))
     this.requestUpdate()
   }
 
-  protected dropPiece(event: DragEvent) {
-    this.dispatchEvent(new CustomEvent('piece-moved', {
-      detail: {
-        from: this.picked,
-        to: this.getPosition(event)!
-      }
-    }))
-    this.letGoPiece()
+  protected dropPiece(event: DragEvent | TouchEvent) {
+    const to = this.getPosition(event)
+    if (this.picked && this.picked?.toString() != to.toString()) {
+      this.dispatchEvent(new CustomEvent('piece-moved', { detail: { from: this.picked, to } }))
+      this.letGoPiece()
+    }
   }
 
   protected letGoPiece() {
@@ -131,9 +129,8 @@ export default class extends LitElement {
       @dragend=${this.letGoPiece}
       @drop=${this.dropPiece}
       @click=${this.destroy}
-      style=${styleMap({
-        gridArea: `${y + 1} / ${x + 1}`
-      })}>
+      @touchend=${this.dropPiece}
+      style=${styleMap({ gridArea: `${y + 1} / ${x + 1}` })}>
       ${spot == Spot.DESTROYED || spot == Spot.BLACK || spot == Spot.WHITE ? html`
         <span
           part="symbol
@@ -141,6 +138,7 @@ export default class extends LitElement {
             symbol-${this.canPickupPiece([x, y]) ? 'draggable' : 'not-draggable'}"
           x=${x} y=${y}
           draggable=${this.canPickupPiece([x, y]).toString() as 'true' | 'false'}
+          @touchend=${(e: TouchEvent) => this.canPickupPiece([x, y]) && this.pickupPiece(e)}
           @dragstart=${this.pickupPiece}
         ></span>` : ''}
     </div>`))}`
