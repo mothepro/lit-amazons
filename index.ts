@@ -57,13 +57,13 @@ export default class extends LitElement {
     display: grid;
     user-select: none;
   }
-  :host [part~=symbol-1]:before {
+  :host [part~=symbol-${Spot.BLACK}]:before {
     content: var(--blackSpot);
   }
-  :host [part~=symbol-2]:before {
+  :host [part~=symbol-${Spot.WHITE}]:before {
     content: var(--whiteSpot);
   }
-  :host [part~=symbol-4]:before {
+  :host [part~=symbol-${Spot.DESTROYED}]:before {
     content: var(--destroyedSpot);
   }`
 
