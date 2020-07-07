@@ -31,6 +31,10 @@ export default class extends LitElement {
   @property({ type: Boolean })
   ignore = false
 
+  /** Whether a piece is currently being dragged. */
+  @property({ type: Boolean, reflect: true })
+  dragging = false
+
   @property({ type: Number })
   state = State.WAITING
 
@@ -100,7 +104,7 @@ export default class extends LitElement {
 
   protected pickupPiece(event: DragEvent | TouchEvent) {
     this.dispatchEvent(new CustomEvent('piece-picked', { detail: this.picked = this.getPosition(event) }))
-    this.requestUpdate()
+    this.dragging = true
   }
 
   protected dropPiece(event: DragEvent | TouchEvent) {
@@ -114,7 +118,7 @@ export default class extends LitElement {
   protected letGoPiece() {
     delete this.picked
     this.dispatchEvent(new CustomEvent('piece-let-go'))
-    this.requestUpdate()
+    this.dragging = false
   }
 
   protected readonly render = () => html`${this.board?.map((row, y) => row.map((spot, x) => html`
