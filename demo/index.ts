@@ -24,7 +24,6 @@ export default class extends LitElement {
   static readonly styles = css`
   :host {
     text-align: center;
-    
     --blackSpot: '♛';
     --whiteSpot: '♕';
     --destroyedSpot: '💥';
