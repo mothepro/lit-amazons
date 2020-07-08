@@ -1,5 +1,6 @@
 html {
   font-family: Roboto, sans-serif;
+  color: #333;
 }
 
 h1, ::part(title) {
@@ -14,6 +15,13 @@ h1, ::part(title) {
 }
 .subtitle {
   font-size: 14px;
+}
+
+.icon {
+  position: fixed;
+  top: .5em;
+  right: .5em;
+  color: #333
 }
 
 ::part(lobby) {
