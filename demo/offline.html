@@ -26,7 +26,8 @@
     Amazons
     <span class="subtitle">by Mo</span>
   </h1>
-  <a class="icon" href="https://docs.google.com/forms/d/1cJmDt4KrZ451KpWr-UoPhbXEMJtNplNJl-Ls-VpSp_o/viewform" target="_blank">
+  <a class="icon" target="_blank"
+    href="https://docs.google.com/forms/d/1cJmDt4KrZ451KpWr-UoPhbXEMJtNplNJl-Ls-VpSp_o/viewform">
     <mwc-icon label="Feedback">feedback</mwc-icon>
   </a>
   <p2p-amazons></p2p-amazons>
@@ -37,6 +38,14 @@
   function gtag() { dataLayer.push(arguments) }
   gtag('js', new Date())
   gtag('config', 'UA-48191613-7')
+
+  document.body.addEventListener('p2p-error', error => {
+    console.error(error)
+    ga('send', 'exception', {
+      exDescription: `${error.message} -- ${error.stack}`,
+      exFatal: false, // idk...
+    })
+  })
 </script>
 
 </html>
