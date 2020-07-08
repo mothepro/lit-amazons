@@ -1,11 +1,12 @@
 html {
   font-family: Roboto, sans-serif;
+  color: hsla(0, 0%, 0%, 0.87);
 }
 
 h1, ::part(title) {
   text-align: center;
-  color: hsla(0, 0%, 0%, 0.87);
-  font-size: 3.75rem;
+  font-size: 2.75rem;
+  font-size: 4.5vmin;
   font-family: "Roboto", "Helvetica", "Arial", sans-serif;
   font-weight: 300;
   line-height: 1;
@@ -13,7 +14,14 @@ h1, ::part(title) {
   margin-bottom: .35em;
 }
 .subtitle {
-  font-size: 14px;
+  font-size: 16px;
+}
+
+.icon {
+  position: fixed;
+  top: 1em;
+  right: 1em;
+  color: hsla(0, 0%, 0%, 0.87);
 }
 
 ::part(lobby) {
