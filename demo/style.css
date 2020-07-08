@@ -5,8 +5,7 @@ html {
 
 h1, ::part(title) {
   text-align: center;
-  font-size: 2.75rem;
-  font-size: 4.5vmin;
+  font-size: 3em;
   font-family: "Roboto", "Helvetica", "Arial", sans-serif;
   font-weight: 300;
   line-height: 1;

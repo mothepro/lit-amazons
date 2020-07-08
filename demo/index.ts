@@ -130,8 +130,10 @@ export default class extends LitElement {
             throw Error(`Only expected 1 or 2 bytes, but ${name} sent ${data} (${data.byteLength} bytes)`)
         }
       }
-    } catch (err) {
-      console.error('Lost Connection with', name, err)
+    } catch (error) {
+      error.name = name
+      error.reaon = 'Lost Connection'
+      this.dispatchEvent(new ErrorEvent('p2p-error', { error }))
     }
     close()
   }
