@@ -108,7 +108,7 @@ export default class extends LitElement {
     this.engine.start()
     for await (const state of this.engine.stateChange)
       this.requestUpdate()
-    this.confetti = 150
+    this.confetti = 100
     setTimeout(() => this.confetti = 0, 10 * 1000)
   }
 
