@@ -50,7 +50,17 @@ export default class extends LitElement {
   }
   
   :host ::part(spot) {
-    width: 100%
+    display: flex;
+    align-items: center;
+    text-align: center;
+    justify-content: center;
+  }
+  :host ::part(spot)::after {
+    content: '';
+    display: inline-block;
+    width: 1px;
+    height: 0;
+    padding-bottom: 100%;
   }
   :host ::part(spot-parity-same) {
     background-color: lightgrey;
