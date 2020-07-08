@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Amazons Demo</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500">
+  <link rel="stylesheet" href="style.css">
+  <script type="importmap-shim" src="import-map.json"></script>
+  <!-- Production -->
+  <script prod-only type=prod-only-module src="//unpkg.com/es-module-shims@0.4.6/dist/es-module-shims.min.js"></script>
+  <script prod-only type=prod-only-module-shim src="//unpkg.com/@mothepro/lit-amazons/dist/esm/demo/index.js"></script>
+  <script prod-only type=prod-only-application/javascript async
+    src="https://www.googletagmanager.com/gtag/js?id=UA-48191613-7"></script>
+  <!-- Development -->
+  <script dev-only type=application/javascript src="//unpkg.com/typescript/lib/typescript.js"></script>
+  <script dev-only type=module src="//unpkg.com/@mothepro/es-module-shims@0.0.0/dist/es-module-shims.min.js"></script>
+  <script dev-only type=module-shim src="index.ts"></script>
+</head>
+
+<body>
+  <a class="icon" href="https://docs.google.com/forms/d/1cJmDt4KrZ451KpWr-UoPhbXEMJtNplNJl-Ls-VpSp_o/viewform" target="_blank">
+    <mwc-icon label="Feedback">feedback</mwc-icon>
+  </a>
+  <h1 class="not-p2p-ready">
+    Amazons
+    <span class="subtitle">by Mo</span>
+  </h1>
+  <p2p-amazons slot="p2p"></p2p-amazons>
+</body>
+
+<script>
+  window.dataLayer = window.dataLayer || []
+  function gtag() { dataLayer.push(arguments) }
+  gtag('js', new Date())
+  gtag('config', 'UA-48191613-7')
+</script>
+
+</html>
