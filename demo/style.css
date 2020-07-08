@@ -1,5 +1,6 @@
 :root {
-  --color: hsla(0, 0%, 0%, 0.87);
+  --fg: hsla(0, 0%, 0%, 0.87);
+  --bg: #eee;
   --blackSpot: '♛';
   --whiteSpot: '♕';
   --destroyedSpot: '💥';
@@ -12,11 +13,11 @@
   --spot-valid-bg-hover: yellow;
   --piece-size: 6vmin;
   --symbol-black-bg: transparent;
-  --symbol-black-fg: --color;
+  --symbol-black-fg: --fg;
   --symbol-white-bg: transparent;
-  --symbol-white-fg: --color;
+  --symbol-white-fg: --fg;
   --symbol-destroyed-bg: transparent;
-  --symbol-destroyed-fg: --color;
+  --symbol-destroyed-fg: --fg;
 }
 
 @media (min-width: 1200px) { /* bootstrap "xl" -- Don't let it get too big */
@@ -25,24 +26,31 @@
   }
 }
 
+/* Normalize */
 html {
-  font-family: Roboto, sans-serif;
-  color: var(--color, black);
+  font-family: Roboto, Helvetica, Arial, sans-serif;
+  color: var(--fg, black);
+  background-color: var(--bg, white);
 }
 
 h1, ::part(title) {
-  text-align: center;
-  font-size: 3em;
-  font-family: "Roboto", "Helvetica", "Arial", sans-serif;
   font-weight: 300;
-  line-height: 1;
-  letter-spacing: -0.00833em;
-  margin-bottom: .35em;
+  font-size: 3em;
+  text-align: center;
+  margin: .35em 0;
 }
 .subtitle {
   font-size: 16px;
 }
 
+.icon {
+  position: fixed;
+  top: 1em;
+  right: 1em;
+  color: var(--fg);
+}
+
+/* Parts */
 ::part(confetti) {
   position: fixed;
 }
@@ -55,13 +63,6 @@ h1, ::part(title) {
   max-height: 1000px;
 }
 
-.icon {
-  position: fixed;
-  top: 1em;
-  right: 1em;
-  color: hsla(0, 0%, 0%, 0.87);
-}
-
 ::part(lobby) {
   display: block;
   margin: 0 auto;
@@ -70,6 +71,7 @@ h1, ::part(title) {
   border-radius: 0.5em;
 }
 
+/* Loading */
 .loading {
   text-align: center;
   position: fixed;
