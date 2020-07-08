@@ -22,26 +22,9 @@ export default class extends LitElement {
   protected confetti = 0
 
   static readonly styles = css`
-  :host {
-    text-align: center;
-    --blackSpot: '♛';
-    --whiteSpot: '♕';
-    --destroyedSpot: '💥';
-  }
-
-  :host lit-confetti {
-    position: fixed;
-  }
-
   :host lit-amazons {
     grid-auto-rows: 1fr;
     grid-auto-columns: 1fr;
-
-    border: thin solid black;
-    margin: 0 auto;
-    width: 100%;
-    max-width: 1000px;
-    max-height: 1000px;
   }
 
   :host lit-amazons[dragging], :host ::part(symbol-draggable) {
@@ -62,20 +45,24 @@ export default class extends LitElement {
     padding-bottom: 100%;
   }
   :host ::part(spot-parity-same) {
-    background-color: lightgrey;
+    background-color: var(--spot-same-bg, lightgrey);
+  }
+  :host ::part(spot-parity-different) {
+    background-color: var(--spot-different-bg, white);
   }
   :host ::part(symbol-draggable) {
     cursor: grab;
   }
   :host ::part(symbol-draggable):active {
-    color: red;
+    color: var(--drag-fg);
   }
   :host :not([ignore])::part(spot-valid) {
-    background-color: yellow;
+    background-color: var(--spot-valid-bg, yellow);
   }
   :host ::part(spot-valid):hover {
     cursor: pointer;
-    border: thin solid red;
+    border: var(--spot-border, thin solid red);
+    background-color: var(--spot-valid-bg-hover, yellow);
   }
 
   /* Symbol Sizing */
@@ -189,7 +176,7 @@ export default class extends LitElement {
       @piece-moved=${this.pieceMoved}
       @spot-destroyed=${this.spotDestroyed}
     ></lit-amazons>
-    <lit-confetti count=${this.confetti} gravity=1></lit-confetti>`
+    <lit-confetti part="confetti" gravity=1 count=${this.confetti}></lit-confetti>`
 
   // TODO: Make the following static
 

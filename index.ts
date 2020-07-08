@@ -62,13 +62,13 @@ export default class extends LitElement {
     user-select: none;
   }
   :host [part~=symbol-${Spot.BLACK}]:before {
-    content: var(--blackSpot);
+    content: var(--blackSpot, '♛');
   }
   :host [part~=symbol-${Spot.WHITE}]:before {
-    content: var(--whiteSpot);
+    content: var(--whiteSpot, '♕');
   }
   :host [part~=symbol-${Spot.DESTROYED}]:before {
-    content: var(--destroyedSpot);
+    content: var(--destroyedSpot, '💥');
   }`
 
   /** Whether a spot is valid to be played on in this state. */
