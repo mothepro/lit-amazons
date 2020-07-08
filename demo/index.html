@@ -22,16 +22,13 @@
 </head>
 
 <body>
-  <a class="icon" target="_blank" href="https://docs.google.com/forms/d/1cJmDt4KrZ451KpWr-UoPhbXEMJtNplNJl-Ls-VpSp_o/viewform">
-    <mwc-icon label="Feedback">feedback</mwc-icon>
-  </a>
   <p2p-switch 
     local-storage
     max-peers="1"
     signaling="wss://ws.parkshade.com:443"
     version="0.3.2"
-    retries="3"
-    timeout="5000"
+    retries="2"
+    timeout="22500"
     stuns='[
       "stun:stun.stunprotocol.org",
       "stun:stun.l.google.com:19302",
@@ -40,6 +37,12 @@
       "stun:stun3.l.google.com:19302",
       "stun:stun4.l.google.com:19302"
     ]'>
+    <h1 class="not-p2p-ready">
+      Amazons
+      <span class="subtitle">by Mo</span>
+    </h1>
+    <p2p-amazons slot="p2p"></p2p-amazons>
+  
     <div slot="offline" class="loading">
       <div></div>
       <div></div>
@@ -54,13 +57,10 @@
       <p>Not connected to the Peer-to-Peer network. Try out the game locally!</p>
       <p2p-amazons></p2p-amazons>
     </div>
-    
-    <h1 class="not-p2p-ready">
-      Amazons
-      <span class="subtitle">by Mo</span>
-    </h1>
-    <p2p-amazons slot="p2p"></p2p-amazons>
   </p2p-switch>
+  <a class="icon" target="_blank" href="https://docs.google.com/forms/d/1cJmDt4KrZ451KpWr-UoPhbXEMJtNplNJl-Ls-VpSp_o/viewform">
+    <mwc-icon label="Feedback">feedback</mwc-icon>
+  </a>
 </body>
 
 <script>
