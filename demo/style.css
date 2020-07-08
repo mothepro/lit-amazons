@@ -1,6 +1,5 @@
-html {
-  font-family: Roboto, sans-serif;
-  color: hsla(0, 0%, 0%, 0.87);
+:root {
+  --color: hsla(0, 0%, 0%, 0.87);
   --blackSpot: '♛';
   --whiteSpot: '♕';
   --destroyedSpot: '💥';
@@ -11,6 +10,24 @@ html {
   --spot-valid-bg: yellow;
   --spot-border: thin solid red;
   --spot-valid-bg-hover: yellow;
+  --piece-size: 6vmin;
+  --symbol-black-bg: transparent;
+  --symbol-black-fg: --color;
+  --symbol-white-bg: transparent;
+  --symbol-white-fg: --color;
+  --symbol-destroyed-bg: transparent;
+  --symbol-destroyed-fg: --color;
+}
+
+@media (min-width: 1200px) { /* bootstrap "xl" -- Don't let it get too big */
+  :root {
+    --piece-size: 5em;
+  }
+}
+
+html {
+  font-family: Roboto, sans-serif;
+  color: var(--color, black);
 }
 
 h1, ::part(title) {

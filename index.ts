@@ -60,6 +60,8 @@ export default class extends LitElement {
   :host {
     display: grid;
     user-select: none;
+    grid-auto-rows: 1fr;
+    grid-auto-columns: 1fr;
   }
   :host [part~=symbol-${Spot.BLACK}]:before {
     content: var(--blackSpot, '♛');

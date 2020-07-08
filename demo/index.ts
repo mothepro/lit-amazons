@@ -22,72 +22,60 @@ export default class extends LitElement {
   protected confetti = 0
 
   static readonly styles = css`
-  :host lit-amazons {
-    grid-auto-rows: 1fr;
-    grid-auto-columns: 1fr;
-  }
-
-  :host lit-amazons[dragging], :host ::part(symbol-draggable) {
-    cursor: grabbing;
-  }
-  
-  :host ::part(spot) {
+  ::part(spot) {
     display: flex;
     align-items: center;
     text-align: center;
     justify-content: center;
   }
-  :host ::part(spot)::after {
+  ::part(spot)::after {
     content: '';
     display: inline-block;
     width: 1px;
     height: 0;
     padding-bottom: 100%;
   }
-  :host ::part(spot-parity-same) {
+
+  ::part(symbol-${Spot.BLACK}) {
+    background-color: var(--symbol-black-bg, transparent);
+    color: var(--symbol-black-fg, black);
+  }
+  ::part(symbol-${Spot.WHITE}) {
+    background-color: var(--symbol-white-bg, transparent);
+    color: var(--symbol-white-fg, black);
+  }
+  ::part(symbol-${Spot.DESTROYED}) {
+    background-color: var(--symbol-destroyed-bg, transparent);
+    color: var(--symbol-destroyed-fg, black);
+  }
+  ::part(spot-parity-same) {
     background-color: var(--spot-same-bg, lightgrey);
   }
-  :host ::part(spot-parity-different) {
+  ::part(spot-parity-different) {
     background-color: var(--spot-different-bg, white);
   }
-  :host ::part(symbol-draggable) {
-    cursor: grab;
-  }
-  :host ::part(symbol-draggable):active {
+  ::part(symbol-draggable):active{
     color: var(--drag-fg);
+    background-color: transparent;
+    overflow: hidden;
   }
-  :host :not([ignore])::part(spot-valid) {
+  :not([ignore])::part(spot-valid) {
     background-color: var(--spot-valid-bg, yellow);
   }
-  :host ::part(spot-valid):hover {
+  :not([ignore])::part(spot-valid):hover {
     cursor: pointer;
     border: var(--spot-border, thin solid red);
     background-color: var(--spot-valid-bg-hover, yellow);
   }
-
-  /* Symbol Sizing */
-  :host ::part(symbol) {
-    font-size: 1em;
+  ::part(symbol) {
+    font-size: var(--piece-size, 6vw);
   }
-  @media (min-width: 576px) { /* bootstrap "sm" */
-    :host ::part(symbol) {
-      font-size: 2em;
-    }
+  
+  ::part(symbol-draggable) {
+    cursor: grab;
   }
-  @media (min-width: 768px) { /* bootstrap "md" */
-    :host ::part(symbol) {
-      font-size: 3em;
-    }
-  }
-  @media (min-width: 992px) { /* bootstrap "lg" */
-    :host ::part(symbol) {
-      font-size: 4em;
-    }
-  }
-  @media (min-width: 1200px) { /* bootstrap "xl" */
-    :host ::part(symbol) {
-      font-size: 5em;
-    }
+  ::part(symbol-draggable):active, lit-amazons[dragging] { /* Doesn't work :'( */
+    cursor: grabbing !important;
   }`
 
   protected async firstUpdated() {
