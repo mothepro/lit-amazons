@@ -24,5 +24,10 @@
 
 Take a look at the [demo](https://github.com/mothepro/lit-amazons/blob/master/demo/index.ts) for simple of usage.
 
-TODO...
+## Roadmap
+
++ Dark mode with toggle
++ Nicer color scheme
++ Run deploy scripts on offline mode
+ + Even better: use a query param to toggle between offline mode (disabling the p2p-switch)
 + Support drag and drop on mobile

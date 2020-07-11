@@ -18,6 +18,9 @@
   --symbol-white-fg: --fg;
   --symbol-destroyed-bg: transparent;
   --symbol-destroyed-fg: --fg;
+  
+  --mdc-theme-primary: red;
+  --mdc-theme-text-primary-on-background: purple;
 }
 
 @media (min-width: 1200px) { /* bootstrap "xl" -- Don't let it get too big */
@@ -46,7 +49,6 @@ h1, ::part(title) {
 .icon {
   position: fixed;
   top: 1em;
-  right: 1em;
   color: var(--fg);
 }
 
