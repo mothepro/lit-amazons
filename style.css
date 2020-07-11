@@ -1,17 +1,46 @@
+:root {
+  --fg: hsla(0, 0%, 0%, 0.87);
+  --bg: #eee;
+  --blackSpot: '♛';
+  --whiteSpot: '♕';
+  --destroyedSpot: '💥';
+  --spot-valid: purple;
+  --spot-same-bg: lightgrey;
+  --spot-different-bg: white;
+  --drag-fg: red;
+  --spot-valid-bg: yellow;
+  --spot-border: thin solid red;
+  --spot-valid-bg-hover: yellow;
+  --piece-size: 6vmin;
+  --symbol-black-bg: transparent;
+  --symbol-black-fg: --fg;
+  --symbol-white-bg: transparent;
+  --symbol-white-fg: --fg;
+  --symbol-destroyed-bg: transparent;
+  --symbol-destroyed-fg: --fg;
+  
+  --mdc-theme-primary: red;
+  --mdc-theme-text-primary-on-background: purple;
+}
+
+@media (min-width: 1200px) { /* bootstrap "xl" -- Don't let it get too big */
+  :root {
+    --piece-size: 5em;
+  }
+}
+
+/* Normalize */
 html {
-  font-family: Roboto, sans-serif;
-  color: hsla(0, 0%, 0%, 0.87);
+  font-family: Roboto, Helvetica, Arial, sans-serif;
+  color: var(--fg, black);
+  background-color: var(--bg, white);
 }
 
 h1, ::part(title) {
-  text-align: center;
-  font-size: 2.75rem;
-  font-size: 4.5vmin;
-  font-family: "Roboto", "Helvetica", "Arial", sans-serif;
   font-weight: 300;
-  line-height: 1;
-  letter-spacing: -0.00833em;
-  margin-bottom: .35em;
+  font-size: 3em;
+  text-align: center;
+  margin: .35em 0;
 }
 .subtitle {
   font-size: 16px;
@@ -20,8 +49,20 @@ h1, ::part(title) {
 .icon {
   position: fixed;
   top: 1em;
-  right: 1em;
-  color: hsla(0, 0%, 0%, 0.87);
+  color: var(--fg);
+}
+
+/* Parts */
+::part(confetti) {
+  position: fixed;
+}
+
+::part(game) {
+  border: thin solid black;
+  margin: 0 auto;
+  width: 100%;
+  max-width: 1000px;
+  max-height: 1000px;
 }
 
 ::part(lobby) {
@@ -32,6 +73,7 @@ h1, ::part(title) {
   border-radius: 0.5em;
 }
 
+/* Loading */
 .loading {
   text-align: center;
   position: fixed;
@@ -72,10 +114,20 @@ h1, ::part(title) {
 }
 
 /* Only show slots when state matches. */
-p2p-switch[state="3"] .not-p2p-ready,
+p2p-switch:not([state="-1"]) [slot="disconnected"],
+p2p-switch:not([state="-1"]) .p2p-disconnected,
+
+p2p-switch:not([state="0"]) [slot="offline"],
 p2p-switch:not([state="0"]) .p2p-offline,
-p2p-switch:not([state="3"]) .p2p-ready,
+
+p2p-switch:not([state="1"]) [slot="lobby"],
+p2p-switch:not([state="1"]) .p2p-lobby,
+
 p2p-switch:not([state="2"]) [slot="loading"],
-p2p-switch:not([state="-1"]) [slot="disconnected"] {
+p2p-switch:not([state="2"]) .p2p-loading,
+
+p2p-switch:not([state="3"]) [slot="ready"],
+p2p-switch:not([state="3"]) .p2p-ready,
+p2p-switch[state="3"] .not-p2p-ready {
   display: none;
 }

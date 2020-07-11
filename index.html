@@ -5,7 +5,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
-  <title>Amazons Demo</title>
+  <title>Amazons Peer to Peer</title>
   <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500">
   <link rel="stylesheet" href="style.css">
@@ -14,7 +14,7 @@
   <script prod-only type=module src="//unpkg.com/es-module-shims@0.4.6/dist/es-module-shims.min.js"></script>
   <script prod-only type=module-shim src="//unpkg.com/@mothepro/lit-amazons/dist/esm/demo/index.js"></script>
   <script prod-only type=application/javascript async
-    src="https://www.googletagmanager.com/gtag/js?id=UA-48191613-7"></script>
+    src="https://www.googletagmanager.com/gtag/js?id=UA-172429940-1"></script>
   <!-- Development -->
   <script dev-only type=dev-only-application/javascript src="//unpkg.com/typescript/lib/typescript.js"></script>
   <script dev-only type=dev-only-module src="//unpkg.com/@mothepro/es-module-shims@0.0.0/dist/es-module-shims.min.js"></script>
@@ -41,7 +41,6 @@
       Amazons
       <span class="subtitle">by Mo</span>
     </h1>
-    <p2p-amazons slot="p2p"></p2p-amazons>
   
     <div slot="offline" class="loading">
       <div></div>
@@ -53,12 +52,21 @@
       <div></div>
     </div>
 
-    <div slot="disconnected">
-      <p>Not connected to the Peer-to-Peer network. Try out the game locally!</p>
-      <p2p-amazons></p2p-amazons>
-    </div>
+    <mwc-snackbar
+      open
+      slot="disconnected"
+      timeoutMs="10000"
+      labelText="Not connected to the Peer-to-Peer network. You're now playing offline!"
+    ></mwc-snackbar>
+
+    <a class="icon offline" style="right: 2em" href="/#p2p-offline">
+      <mwc-icon label="Offline" title="Solo Player">offline_bolt</mwc-icon>
+    </a>
+
+    <p2p-amazons slot="p2p"></p2p-amazons>
   </p2p-switch>
-  <a class="icon" target="_blank" href="https://docs.google.com/forms/d/1cJmDt4KrZ451KpWr-UoPhbXEMJtNplNJl-Ls-VpSp_o/viewform">
+  <a class="icon" style="right: 1em" target="_blank"
+    href="https://docs.google.com/forms/d/1cJmDt4KrZ451KpWr-UoPhbXEMJtNplNJl-Ls-VpSp_o/viewform">
     <mwc-icon label="Feedback">feedback</mwc-icon>
   </a>
 </body>
@@ -67,7 +75,15 @@
   window.dataLayer = window.dataLayer || []
   function gtag() { dataLayer.push(arguments) }
   gtag('js', new Date())
-  gtag('config', 'UA-48191613-7')
+  gtag('config', 'UA-172429940-1')
+
+  document.body.addEventListener('p2p-error', error => {
+    console.error(error)
+    ga('send', 'exception', {
+      exDescription: `${error.message} -- ${error.stack}`,
+      exFatal: false, // idk...
+    })
+  })
 </script>
 
 </html>

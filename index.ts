@@ -22,83 +22,67 @@ export default class extends LitElement {
   protected confetti = 0
 
   static readonly styles = css`
-  :host {
+  ::part(spot) {
+    display: flex;
+    align-items: center;
     text-align: center;
-    
-    --blackSpot: '♛';
-    --whiteSpot: '♕';
-    --destroyedSpot: '💥';
+    justify-content: center;
+  }
+  ::part(spot)::after {
+    content: '';
+    display: inline-block;
+    width: 1px;
+    height: 0;
+    padding-bottom: 100%;
   }
 
-  :host lit-confetti {
-    position: fixed;
+  ::part(symbol-${Spot.BLACK}) {
+    background-color: var(--symbol-black-bg, transparent);
+    color: var(--symbol-black-fg, black);
   }
-
-  :host lit-amazons {
-    grid-auto-rows: 1fr;
-    grid-auto-columns: 1fr;
-
-    border: thin solid black;
-    margin: 0 auto;
-    width: 100%;
-    max-width: 1000px;
-    max-height: 1000px;
+  ::part(symbol-${Spot.WHITE}) {
+    background-color: var(--symbol-white-bg, transparent);
+    color: var(--symbol-white-fg, black);
   }
-
-  :host lit-amazons[dragging], :host ::part(symbol-draggable) {
-    cursor: grabbing;
+  ::part(symbol-${Spot.DESTROYED}) {
+    background-color: var(--symbol-destroyed-bg, transparent);
+    color: var(--symbol-destroyed-fg, black);
+  }
+  ::part(spot-parity-same) {
+    background-color: var(--spot-same-bg, lightgrey);
+  }
+  ::part(spot-parity-different) {
+    background-color: var(--spot-different-bg, white);
+  }
+  ::part(symbol-draggable):active{
+    color: var(--drag-fg);
+    background-color: transparent;
+    overflow: hidden;
+  }
+  :not([ignore])::part(spot-valid) {
+    background-color: var(--spot-valid-bg, yellow);
+  }
+  :not([ignore])::part(spot-valid):hover {
+    cursor: pointer;
+    border: var(--spot-border, thin solid red);
+    background-color: var(--spot-valid-bg-hover, yellow);
+  }
+  ::part(symbol) {
+    font-size: var(--piece-size, 6vw);
   }
   
-  :host ::part(spot) {
-    width: 100%
-  }
-  :host ::part(spot-parity-same) {
-    background-color: lightgrey;
-  }
-  :host ::part(symbol-draggable) {
+  ::part(symbol-draggable) {
     cursor: grab;
   }
-  :host ::part(symbol-draggable):active {
-    color: red;
-  }
-  :host :not([ignore])::part(spot-valid) {
-    background-color: yellow;
-  }
-  :host ::part(spot-valid):hover {
-    cursor: pointer;
-    border: thin solid red;
-  }
-
-  /* Symbol Sizing */
-  :host ::part(symbol) {
-    font-size: 1em;
-  }
-  @media (min-width: 576px) { /* bootstrap "sm" */
-    :host ::part(symbol) {
-      font-size: 2em;
-    }
-  }
-  @media (min-width: 768px) { /* bootstrap "md" */
-    :host ::part(symbol) {
-      font-size: 3em;
-    }
-  }
-  @media (min-width: 992px) { /* bootstrap "lg" */
-    :host ::part(symbol) {
-      font-size: 4em;
-    }
-  }
-  @media (min-width: 1200px) { /* bootstrap "xl" */
-    :host ::part(symbol) {
-      font-size: 5em;
-    }
+  ::part(symbol-draggable):active, lit-amazons[dragging] { /* Doesn't work :'( */
+    cursor: grabbing !important;
   }`
 
   protected async firstUpdated() {
     this.engine.start()
     for await (const state of this.engine.stateChange)
       this.requestUpdate()
-    this.confetti = 150
+    this.confetti = 100
     setTimeout(() => this.confetti = 0, 10 * 1000)
   }
 
@@ -130,8 +114,10 @@ export default class extends LitElement {
             throw Error(`Only expected 1 or 2 bytes, but ${name} sent ${data} (${data.byteLength} bytes)`)
         }
       }
-    } catch (err) {
-      console.error('Lost Connection with', name, err)
+    } catch (error) {
+      error.name = name
+      error.reaon = 'Lost Connection'
+      this.dispatchEvent(new ErrorEvent('p2p-error', { error }))
     }
     close()
   }
@@ -178,7 +164,7 @@ export default class extends LitElement {
       @piece-moved=${this.pieceMoved}
       @spot-destroyed=${this.spotDestroyed}
     ></lit-amazons>
-    <lit-confetti count=${this.confetti} gravity=1></lit-confetti>`
+    <lit-confetti part="confetti" gravity=1 count=${this.confetti}></lit-confetti>`
 
   // TODO: Make the following static
 
